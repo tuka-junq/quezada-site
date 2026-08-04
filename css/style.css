@@ -2126,19 +2126,19 @@ a.find__value:hover { color: var(--gold-light); }
 
   /* sem margem lateral: a coluna do celular é uma só, do gutter ao gutter */
   .hero__block { max-width: 100%; }
-  /* Com um dedo de cada lado a coluna encolheu, e o título passou a quebrar em
-     quatro linhas — o bloco crescia e subia para dentro da estrutura. Corpo
-     menor devolve as três linhas e o texto volta para a metade vazia. */
-  .hero__title { font-size: clamp(1.6875rem, 7.4vw, 2.375rem); margin-bottom: 1.1rem; }
-  .hero__sub { margin-bottom: 1.5rem; }
-  .hero__block .eyebrow { margin-bottom: 1rem; }
+  /* O título é o que a pessoa lê primeiro: ele cresce. O que paga essa conta
+     são o rótulo e o subtítulo, que em tela de celular são apoio — e não a
+     posição do bloco, que precisa continuar no chão vazio do vídeo. */
+  .hero__title { font-size: clamp(1.9375rem, 8.6vw, 2.75rem); margin-bottom: 0.95rem; }
+  .hero__sub { font-size: var(--t-13); line-height: 1.6; margin-bottom: 1.3rem; }
+  .hero__block .eyebrow { font-size: 0.625rem; letter-spacing: 0.14em; margin-bottom: 0.8rem; }
   .scene-mid,
   .scene-left { max-width: 100%; margin-left: 0; margin-bottom: 0; }
-  .scene-mid .h2 { font-size: clamp(1.5rem, 6.4vw, 2rem); margin-bottom: 0.9rem; }
-  .scene-mid .lede { max-width: 100%; }
+  .scene-mid .h2 { font-size: clamp(1.625rem, 7vw, 2.125rem); margin-bottom: 0.9rem; }
+  .scene-mid .lede { max-width: 100%; font-size: 0.9375rem; line-height: 1.6; }
   .scene-mid .lede + .lede { margin-top: 0.6rem; }
-  .scene-left .h2 { font-size: clamp(1.4375rem, 6vw, 1.875rem); max-width: 100%; }
-  .scene-left .lede { font-size: var(--t-13); }
+  .scene-left .h2 { font-size: clamp(1.5625rem, 6.6vw, 2rem); max-width: 100%; }
+  .scene-left .lede { font-size: 0.875rem; }
 
   /* A LAVAGEM SOBE DO RODAPÉ. No desktop ela lava a metade esquerda porque o
      texto é que fica à esquerda; aqui o texto está embaixo, então o mesmo
@@ -2147,10 +2147,10 @@ a.find__value:hover { color: var(--gold-light); }
   .scene__wash {
     background: linear-gradient(to top,
       rgba(15, 33, 26, 0.97) 0%,
-      rgba(15, 33, 26, 0.96) 44%,
-      rgba(15, 33, 26, 0.88) 56%,
-      rgba(15, 33, 26, 0.5) 68%,
-      rgba(15, 33, 26, 0) 84%);
+      rgba(15, 33, 26, 0.96) 52%,
+      rgba(15, 33, 26, 0.9) 64%,
+      rgba(15, 33, 26, 0.6) 74%,
+      rgba(15, 33, 26, 0) 88%);
   }
 
   /* O véu da cena existe para o texto não brigar com a foto. No celular ele
@@ -2159,11 +2159,23 @@ a.find__value:hover { color: var(--gold-light); }
   .scene__veil {
     background: linear-gradient(to bottom,
       rgba(15, 33, 26, 0.55) 0%,
-      rgba(15, 33, 26, 0) 16%,
-      rgba(15, 33, 26, 0) 34%,
-      rgba(15, 33, 26, 0.5) 60%,
-      rgba(15, 33, 26, 0.82) 100%);
+      rgba(15, 33, 26, 0) 14%,
+      rgba(15, 33, 26, 0) 30%,
+      rgba(15, 33, 26, 0.55) 52%,
+      rgba(15, 33, 26, 0.88) 72%,
+      rgba(15, 33, 26, 0.95) 100%);
   }
+
+  /* ══ Cards da cena 03 ═════════════════════════════════════════════════════
+     Em duas colunas estreitas o texto quebra muito e o card cresce em altura —
+     e como o bloco é ancorado no rodapé, card alto empurra o TÍTULO para cima,
+     para fora do chão escuro. Corpo maior (o pedido) com entrelinha e respiro
+     menores: o card lê melhor e mesmo assim ocupa menos. */
+  .pain { padding: 0.65rem 0.7rem; gap: 0.05rem; }
+  .pain__num { font-size: 1.75rem; margin-bottom: 0; }
+  .pain__title { font-size: 0.875rem; line-height: 1.2; }
+  .pain__text { font-size: 0.75rem; line-height: 1.35; }
+  .scene-kicker { font-size: 0.9375rem; }
 
   .pains { max-width: 100%; gap: 0.5rem; }
   .pain { padding: 0.7rem 0.75rem; }
@@ -2205,6 +2217,18 @@ a.find__value:hover { color: var(--gold-light); }
      acrescentariam brilho num cartão que aqui precisa ser discreto */
   .duo__panel.glass::before,
   .duo__panel.glass::after { display: none; }
+  /* Centralizado e em três linhas: a medida é que define a quebra, e 15ch é
+     onde "Razão e Emoção: / duas especialidades. / Uma visão completa da
+     empresa." fecha em três. O `.gold` já ocupa a primeira linha sozinho. */
+  .duo__intro .h2 {
+    font-size: 1.5rem;
+    max-width: 23ch;
+    margin-inline: auto;
+    text-align: center;
+  }
+  .duo__intro .eyebrow { justify-content: center; }
+  .duo__intro .lede { text-align: center; margin-inline: auto; }
+
   .duo__name { font-size: 1.375rem; }
   .duo__role { margin-top: 0.2rem; font-size: 0.625rem; }
   .duo__bio { margin-top: 0.6rem; font-size: var(--t-13); line-height: 1.6; }
@@ -2230,6 +2254,15 @@ a.find__value:hover { color: var(--gold-light); }
      O palco é preso em 100svh e tem `overflow:hidden` — o que não couber some
      sem aviso, e aqui era o par de botões. Capa menor e corpo mais miúdo para
      tudo caber numa tela de celular COM a rolagem ainda conduzindo o vídeo. */
+  /* O selo "Mais escolhido" do plano em destaque é absoluto e sobe para fora
+     do card: com o respiro do desktop ele encostava no subtítulo da seção.
+     Aqui o afastamento precisa contar com a altura do selo. */
+  .plans-sec .sec-head { margin-bottom: calc(var(--dedo) * 1.1); }
+
+  /* O título das perguntas é o único que não divide a tela com nada: em
+     celular ele estava com o corpo de um título de abertura sem precisar. */
+  .faq__head .h2 { font-size: 1.375rem; max-width: 100%; }
+
   .bookstage__grid { gap: 0.9rem; }
   .bookstage__media { max-height: 29svh; max-width: 29svh; }
   .book__name { font-size: clamp(1.625rem, 7vw, 2.125rem); }
@@ -2249,18 +2282,67 @@ a.find__value:hover { color: var(--gold-light); }
    ~38% da altura da tela — é até ali que vai a sala; o resto é chão. */
 @media (max-width: 860px) and (max-height: 800px) {
   .scene__copy > .shell { padding-bottom: calc(var(--dedo) * 1.25); }
-  .scene-left .h2 { font-size: 1.1875rem; margin-bottom: 0.5rem; }
-  .scene-left .lede { font-size: 0.6875rem; }
-  .pains { gap: 0.4rem; margin-top: 0.85rem; }
-  .pain { padding: 0.55rem 0.6rem; gap: 0.1rem; }
+  .scene-left .h2 { font-size: 1.375rem; margin-bottom: 0.45rem; }
+  .scene-left .lede { font-size: 0.8125rem; }
+  .pains { gap: 0.4rem; margin-top: 0.75rem; }
+  .pain { padding: 0.55rem 0.6rem; }
   .pain__num { font-size: 1.5rem; }
   .pain__title { font-size: 0.8125rem; }
-  .pain__text { font-size: 0.625rem; line-height: 1.35; }
-  .scene-kicker { font-size: 0.8125rem; margin-top: 0.7rem; }
-  .scene-mid .h2 { font-size: 1.375rem; margin-bottom: 0.7rem; }
-  .scene-mid .lede { font-size: 0.8125rem; }
-  .hero__title { font-size: 1.5rem; }
-  .hero__sub { font-size: 0.8125rem; }
+  .pain__text { font-size: 0.6875rem; line-height: 1.3; }
+  .scene-kicker { font-size: 0.875rem; margin-top: 0.6rem; }
+  .scene-mid .h2 { font-size: 1.5rem; margin-bottom: 0.7rem; }
+  .scene-mid .lede { font-size: 0.875rem; }
+  .hero__title { font-size: 1.75rem; margin-bottom: 0.75rem; }
+  .hero__sub { font-size: 0.8125rem; margin-bottom: 1rem; }
+
+  /* Numa tela curta o chão precisa subir mais: o bloco é alto e sobe. Aqui a
+     legibilidade ganha da paisagem — a sala aparece menos, mas o texto para
+     de cair em cima da janela clara. */
+  .scene__wash {
+    background: linear-gradient(to top,
+      rgba(15, 33, 26, 0.97) 0%,
+      rgba(15, 33, 26, 0.96) 56%,
+      rgba(15, 33, 26, 0.9) 68%,
+      rgba(15, 33, 26, 0.55) 78%,
+      rgba(15, 33, 26, 0) 92%);
+  }
+  .scene__veil {
+    background: linear-gradient(to bottom,
+      rgba(15, 33, 26, 0.55) 0%,
+      rgba(15, 33, 26, 0) 12%,
+      rgba(15, 33, 26, 0) 26%,
+      rgba(15, 33, 26, 0.62) 46%,
+      rgba(15, 33, 26, 0.92) 66%,
+      rgba(15, 33, 26, 0.96) 100%);
+  }
+}
+
+/* ══ Aparelho pequeno de verdade (SE, Androids de 640–700px) ══════════════════
+   Aqui a conta é implacável: o chão vazio do vídeo da hero são 58% da altura —
+   371px num aparelho de 640. Com o rótulo, o título maior, o subtítulo e os
+   dois botões, o bloco passava disso e subia por cima da estrutura.
+   Quem cede é tudo o que é apoio: o subtítulo, a altura dos botões e o respiro.
+   O TÍTULO não — ele continua maior do que era antes em qualquer tamanho. */
+@media (max-width: 860px) and (max-height: 700px) {
+  .scene__copy > .shell { padding-bottom: var(--dedo); }
+  .hero__title { font-size: 1.625rem; margin-bottom: 0.6rem; }
+  .hero__sub { font-size: 0.75rem; line-height: 1.5; margin-bottom: 0.85rem; }
+  .hero__block .eyebrow { font-size: 0.5625rem; margin-bottom: 0.6rem; }
+  .hero__block { padding-left: 0.85rem; }
+  .btn { min-height: 40px; padding: 0.8rem 1.5rem; }
+  .btn-row { gap: 0.5rem; }
+
+  .scene-mid .h2 { font-size: 1.375rem; margin-bottom: 0.55rem; }
+  .scene-mid .lede { font-size: 0.8125rem; line-height: 1.5; }
+  .scene-mid .lede + .lede { margin-top: 0.45rem; }
+  .scene-left .h2 { font-size: 1.25rem; margin-bottom: 0.4rem; }
+  .scene-left .lede { font-size: 0.75rem; }
+  .pains { gap: 0.35rem; margin-top: 0.6rem; }
+  .pain { padding: 0.5rem 0.55rem; }
+  .pain__num { font-size: 1.25rem; }
+  .pain__title { font-size: 0.75rem; }
+  .pain__text { font-size: 0.625rem; line-height: 1.3; }
+  .scene-kicker { font-size: 0.8125rem; margin-top: 0.5rem; }
 }
 
 /* Tela curta (SE, aparelhos antigos, teclado aberto): o palco dos livros

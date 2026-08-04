@@ -463,7 +463,18 @@
         }
 
         for (var j = 0; j < statics.length; j++) {
-          statics[j].classList.toggle('is-live', p >= staticRanges[j][0] && p <= staticRanges[j][1]);
+          var vivo = p >= staticRanges[j][0] && p <= staticRanges[j][1];
+          var antes = statics[j].classList.contains('is-live');
+          statics[j].classList.toggle('is-live', vivo);
+          // Vídeo em laço PAUSA ao sair de cena. Ele é invisível (opacity 0),
+          // mas continuava decodificando quadro a quadro atrás da sala — e num
+          // celular isso disputa decodificador com o vídeo que a rolagem está
+          // conduzindo. Era uma das causas do travamento. Só no cruzamento do
+          // estado: chamar play/pause a cada quadro custaria mais que resolve.
+          if (vivo !== antes && statics[j].tagName === 'VIDEO') {
+            if (vivo) { var pv = statics[j].play(); if (pv && pv.catch) pv.catch(function () {}); }
+            else if (!statics[j].paused) statics[j].pause();
+          }
         }
 
         if (bar) bar.style.setProperty('--p', p.toFixed(4));

@@ -128,10 +128,13 @@
            muted playsinline preload="none"
            data-src="assets/video/transicao-sala-resp.mp4" aria-hidden="true"></video>
 
-    <img class="scene__layer" data-only="sm" data-live="0.31,0.90"
+    <img class="scene__layer" data-only="sm" data-live="0.31,0.85"
          data-src="assets/img/mesa-resp.webp" alt="" aria-hidden="true">
 
-    <video class="scene__layer" data-only="sm" data-scrub data-range="0.85,0.97" data-live="0.83,1"
+    <!-- Faixa larga de propósito: 19% da cena para os 8s de vídeo, contra os
+         12% de antes. Como o scrub amarra o quadro à rolagem, faixa mais larga
+         é a MESMA animação em ritmo mais lento — os papéis caem com calma. -->
+    <video class="scene__layer" data-only="sm" data-scrub data-range="0.80,0.99" data-live="0.78,1"
            muted playsinline preload="none"
            data-src="assets/video/sala-desarrumada-resp.mp4" aria-hidden="true"></video>
 
