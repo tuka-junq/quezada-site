@@ -66,8 +66,8 @@ muito mais rolagem. Quem troca é o `initBreakpoint`, lendo os `-sm` do HTML.
 | 0.12 – 0.33 | 0.09 – 0.25 | zoom para dentro da sala (`data-scrub`) |
 | 0.33 | 0.25 | cena 02 + lavagem verde acendem **juntas e na hora** |
 | 0.60 | 0.47 | cena 03: texto e cards, com 300ms de respiro |
-| 0.78 | 0.62 | remate *"Quando percebe…"* (marcador próprio) |
 | — | 0.62 – 0.73 | **a lavagem recua** e título, texto e cards saem |
+| 0.78 | 0.70 | remate *"Quando percebe…"* (marcador próprio) |
 | 0.85 – 0.97 | 0.72 – 0.98 | a mesa se bagunça (desktop `data-autoplay-at`, celular `data-scrub`) |
 
 **A altura mora na folha de estilo, em `--cena-h`** — 490vh no desktop, 640vh no
@@ -325,6 +325,50 @@ compositor; num degradê liso a re-escala é invisível.
 com o `.scene__wash.is-on` da regra geral, que senão fixaria a opacidade em 1 e
 anularia a variável. Empatando, vence por vir depois.
 
+### O remate ocupa a coluna inteira — e por isso sai do fluxo
+
+Quando a lavagem recua e os cards saem, *"Quando percebe, a operação está um
+caos."* é a única coisa na tela: ela fecha a cena enquanto a mesa se desfaz
+atrás. Em 13px, perdida num canto, não fechava nada. No celular ela agora vai de
+margem a margem.
+
+**O tamanho é medido, não estimado.** A coluna é `100vw − 2 gutters − a barra
+dourada`, ou seja `100vw − 104px`. Neste desenho a linha mais longa
+("Quando percebe,") mede **6.64× o corpo**, então o corpo que a leva a 97% da
+coluna é `0.146 × coluna` — de onde sai o `calc(14.61vw − 15.2px)`. Confere nos
+quatro aparelhos:
+
+| tela | corpo | linha maior / coluna | topo do bloco |
+|---|---|---|---|
+| 360×640 | 37px | 248 / 256 (97%) | 73% |
+| 375×667 | 40px | 263 / 271 (97%) | 73% |
+| 390×844 | 42px | 278 / 286 (97%) | 73% |
+| 412×915 | 45px | 299 / 308 (97%) | 74% |
+
+⚠️ **Ela é `position: absolute`, e isso não é enfeite.** O bloco da cena 03 é
+ancorado no rodapé: tudo que cresce dentro dele empurra os cards para CIMA, para
+dentro da janela clara da sala — o problema que a compactação dos cards
+resolveu. Um remate três vezes maior desfaria aquilo sozinho, e ainda durante a
+cena 03 inteira, onde ele está invisível mas continua ocupando altura. Fora do
+fluxo, o tamanho dele não custa nada a ninguém — e de quebra o topo do bloco 03
+desceu de 34% para 40% da tela.
+
+⚠️ **A âncora é o próprio `.scene-left`, por um motivo não óbvio:** `.beat` tem
+`will-change: transform`, e isso faz do bloco um contêiner de posicionamento
+mesmo com `transform: none`. Daí `left/right/bottom: 0` e não os tokens — a
+margem lateral já é a da `.shell` e a borda de baixo do bloco já está na linha
+de base da cópia. Repetir os tokens somava as margens duas vezes e a coluna caía
+de 256 para 168px.
+
+**As quebras são fixas**, em três `<span>` que só viram linha no celular
+(`display: block`; no desktop são inline e a frase quebra sozinha, como sempre).
+Solto, o navegador punha "operação" isolada numa linha; `text-wrap: balance` não
+resolveu — a heurística do Chrome não achou o corte melhor.
+
+**A entrada dela no celular é 0.70, e não 0.62** como no desktop: nesta posição
+ela cairia em cima da última fileira de cards, então só entra depois que elas
+terminam de sair.
+
 **O respiro do responsivo: um dedo nos lados, dois em cima e embaixo.**
 `--dedo: 44px` — não é chute, é a medida do alvo de toque (44pt na Apple, 48dp
 no Material), o mesmo tamanho que a mão usa como referência de folga. Abaixo de
@@ -426,6 +470,12 @@ noreferrer"` em tudo que sai do site.
 | Arquitetura da Ordem — físico | Eduzz |
 | Arquitetura da Ordem — e-book | Amazon |
 | Pensamento Sistêmico | Editora Leader |
+| Logo do cabeçalho e do rodapé | `https://www.quezada.com.br/` |
+
+A marca leva para a **home do site**, e não para `#top`: endereço absoluto, para
+funcionar venha o visitante de onde vier. A do rodapé era um `<span role="img">`
+e virou `<a>` — com resposta ao toque (opacidade, não cor: a marca é pintada por
+trás da máscara) e alvo de 138×150px, bem acima do mínimo de toque.
 
 O texto de cada mensagem do WhatsApp vai **percent-encoded** na query (`?text=`),
 com `+` no lugar do espaço. Acentos precisam ir codificados: `reuni%C3%A3o`, não

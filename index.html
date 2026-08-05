@@ -27,7 +27,9 @@
 <!-- ══════════════════════════════════ HEADER ══════════════════════════════ -->
 <header class="header" id="header">
   <div class="header__inner">
-    <a class="brand" href="#top" aria-label="Quezada — Consultoria Estratégica e Governança Empresarial">
+    <!-- endereço absoluto, e não `#top`: a marca leva para a home do site,
+         venha o visitante de onde vier -->
+    <a class="brand" href="https://www.quezada.com.br/" aria-label="Quezada — Consultoria Estratégica e Governança Empresarial">
       <span class="brand__mark" aria-hidden="true"></span>
       <span class="brand__word" aria-hidden="true"></span>
     </a>
@@ -254,7 +256,13 @@
                  estilo deixa passar quem tem o seu): quem traz o remate é a
                  rolagem, e subir de volta o recolhe. O vídeo da mesa dispara
                  logo em seguida, em 0.66. -->
-            <p class="scene-kicker beat" data-beat="0.78,1" data-beat-sm="0.62,1">Quando percebe, a operação está um caos.</p>
+            <!-- 0.70 no celular, e não 0.62: lá o remate é ancorado no rodapé
+                 da tela, por fora do bloco, e nessa posição ele cai em cima da
+                 última fileira de cards. Entra depois que elas saem. -->
+            <!-- Os três <span> só viram linhas no celular (`display: block`).
+                 No desktop são inline e o espaço entre eles é o do HTML: a
+                 frase quebra sozinha, exatamente como antes. -->
+            <p class="scene-kicker beat" data-beat="0.78,1" data-beat-sm="0.70,1"><span>Quando percebe,</span> <span>a operação está</span> <span>um caos.</span></p>
           </div>
         </div>
       </div>
@@ -797,7 +805,7 @@
     <div class="footer__grid">
 
       <div class="footer__brand">
-        <span class="footer__mark" role="img" aria-label="Quezada — Consultoria Estratégica e Governança Empresarial"></span>
+        <a class="footer__mark" href="https://www.quezada.com.br/" aria-label="Quezada — Consultoria Estratégica e Governança Empresarial"></a>
         <p>
           Consultoria estratégica e governança empresarial para PMEs que querem crescer com
           estrutura, proteção e pessoas alinhadas.

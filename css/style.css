@@ -2007,7 +2007,11 @@ a.find__value:hover { color: var(--gold-light); }
   background: #fff;
   -webkit-mask: var(--logo-lockup) left center / contain no-repeat;
   mask: var(--logo-lockup) left center / contain no-repeat;
+  /* é um link para a home: precisa de resposta ao toque/mouse como qualquer
+     outro. Opacidade e não cor — a marca é pintada por trás da máscara. */
+  transition: opacity 0.35s var(--ease);
 }
+.footer__mark:hover { opacity: 0.72; }
 .footer__brand p {
   font-weight: 300;
   font-size: var(--t-13);
@@ -2130,8 +2134,12 @@ a.find__value:hover { color: var(--gold-light); }
   .scene__copy--left { align-items: flex-end; }
   /* A cena não tem `.section` para dar o respiro vertical: ela é um palco preso.
      Os dois dedos de baixo vêm daqui. Em cima não há o que separar — o que está
-     acima do texto é o próprio vídeo. */
-  .scene__copy > .shell { padding-bottom: calc(var(--dedo) * 2); }
+     acima do texto é o próprio vídeo.
+     `--copy-b` é um token porque DUAS coisas se apoiam nessa mesma linha de
+     base: o bloco de cópia e o remate, que no celular é ancorado por fora do
+     bloco (ver abaixo). Telas curtas reduzem o token, não cada regra. */
+  .scene__copy { --copy-b: calc(var(--dedo) * 2); }
+  .scene__copy > .shell { padding-bottom: var(--copy-b); }
 
   /* sem margem lateral: a coluna do celular é uma só, do gutter ao gutter */
   .hero__block { max-width: 100%; }
@@ -2226,13 +2234,59 @@ a.find__value:hover { color: var(--gold-light); }
   .pain__num { font-size: 1.75rem; margin-bottom: 0; }
   .pain__title { font-size: 0.875rem; line-height: 1.2; }
   .pain__text { font-size: 0.75rem; line-height: 1.35; }
-  .scene-kicker { font-size: 0.9375rem; }
+
+  /* ══ O REMATE, sozinho e do tamanho da coluna ═════════════════════════════
+     Quando a lavagem recua e os cards saem, esta frase é a única coisa na
+     tela: ela fecha a cena enquanto a mesa se desfaz atrás. Em 13px, perdida
+     num canto, não fechava nada. Agora ocupa a coluna inteira, de margem a
+     margem.
+
+     ⚠️ Ela SAI DO FLUXO do bloco (`position: absolute`), e isso não é detalhe.
+     O bloco da cena 03 é ancorado no rodapé: tudo que cresce dentro dele
+     empurra os cards para CIMA, para dentro da janela clara da sala — o
+     problema que a compactação dos cards resolveu. Um remate três vezes maior
+     desfaria aquilo sozinho, e ainda por cima durante a cena 03 inteira, onde
+     ele está invisível mas continua ocupando altura. Ancorado por fora, o
+     tamanho dele não custa nada a ninguém.
+
+     Por isso também o marcador dele no celular é 0.70 e não 0.62: nesta
+     posição ele cairia em cima da última fileira de cards, então só entra
+     depois que elas terminam de sair.
+
+     ⚠️ A âncora é o próprio `.scene-left`, e por um motivo não óbvio: `.beat`
+     tem `will-change: transform`, e isso faz do bloco um contêiner de
+     posicionamento mesmo com `transform: none`. Daí `0/0/0` e não `--gutter`
+     e `--copy-b` — a margem lateral já é a da `.shell`, e a borda de baixo do
+     bloco já está exatamente na linha de base da cópia. Repetir os tokens
+     aqui somava as margens duas vezes (a coluna caía de 256 para 168px). */
+  .scene-kicker {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin-top: 0;
+    max-width: none;
+    /* Medido, não estimado. A coluna é `100vw − 2 gutters − a barra dourada`,
+       ou seja `100vw − 104px`. A linha mais longa ("Quando percebe,") mede
+       6.64× o corpo neste desenho, então o corpo que a leva a 97% da coluna é
+       `0.146 × coluna` — que é esta conta. Confere em 360, 375, 390 e 412px. */
+    font-size: clamp(1.9rem, calc(14.61vw - 15.2px), 3.25rem);
+    line-height: 1.14;
+  }
+  /* As quebras são FIXAS aqui, e não deixadas para o navegador: solto, ele
+     punha "operação" sozinha numa linha e a maior linha ficava 23% mais longa
+     que a menor. `text-wrap: balance` não resolveu — a heurística do Chrome
+     não achou o corte melhor. Com as três linhas dadas, a maior encosta em
+     97% da coluna e a frase lê como foi escrita. */
+  .scene-kicker span { display: block; }
+  .scene-kicker::before { width: 3px; }
 
   .pains { max-width: 100%; gap: 0.5rem; }
   .pain { padding: 0.7rem 0.75rem; }
   .pain__title { font-size: var(--t-13); }
   .pain__text { font-size: 0.6875rem; line-height: 1.4; }
-  .scene-kicker { font-size: var(--t-13); margin-top: 0.9rem; }
+  /* o remate não encolhe junto com os cards: ele está fora do fluxo do bloco,
+     não disputa altura com ninguém, e o tamanho dele vem da LARGURA da coluna */
 
   /* ══ Quem conduz ══════════════════════════════════════════════════════════
      Os painéis viram cartões empilhados sob a foto. MAIS FINOS e MAIS ESCUROS
@@ -2332,7 +2386,7 @@ a.find__value:hover { color: var(--gold-light); }
    dentro do chão escuro. A conta que importa é o topo do bloco ficar abaixo de
    ~38% da altura da tela — é até ali que vai a sala; o resto é chão. */
 @media (max-width: 860px) and (max-height: 800px) {
-  .scene__copy > .shell { padding-bottom: calc(var(--dedo) * 1.25); }
+  .scene__copy { --copy-b: calc(var(--dedo) * 1.25); }
   .scene-left .h2 { font-size: 1.375rem; margin-bottom: 0.45rem; }
   .scene-left .lede { font-size: 0.8125rem; }
   .pains { gap: 0.4rem; margin-top: 0.75rem; }
@@ -2340,7 +2394,6 @@ a.find__value:hover { color: var(--gold-light); }
   .pain__num { font-size: 1.5rem; }
   .pain__title { font-size: 0.8125rem; }
   .pain__text { font-size: 0.6875rem; line-height: 1.3; }
-  .scene-kicker { font-size: 0.875rem; margin-top: 0.6rem; }
   .scene-mid .h2 { font-size: 1.5rem; margin-bottom: 0.7rem; }
   .scene-mid .lede { font-size: 0.875rem; }
   .hero__title { font-size: 1.75rem; margin-bottom: 0.75rem; }
@@ -2377,7 +2430,7 @@ a.find__value:hover { color: var(--gold-light); }
    Quem cede é tudo o que é apoio: o subtítulo, a altura dos botões e o respiro.
    O TÍTULO não — ele continua maior do que era antes em qualquer tamanho. */
 @media (max-width: 860px) and (max-height: 700px) {
-  .scene__copy > .shell { padding-bottom: var(--dedo); }
+  .scene__copy { --copy-b: var(--dedo); }
   .hero__title { font-size: 1.625rem; margin-bottom: 0.6rem; }
   .hero__sub { font-size: 0.75rem; line-height: 1.5; margin-bottom: 0.85rem; }
   .hero__block .eyebrow { font-size: 0.5625rem; margin-bottom: 0.6rem; }
@@ -2395,7 +2448,6 @@ a.find__value:hover { color: var(--gold-light); }
   .pain__num { font-size: 1.25rem; }
   .pain__title { font-size: 0.75rem; }
   .pain__text { font-size: 0.625rem; line-height: 1.3; }
-  .scene-kicker { font-size: 0.8125rem; margin-top: 0.5rem; }
 }
 
 /* Tela curta (SE, aparelhos antigos, teclado aberto): o palco dos livros
