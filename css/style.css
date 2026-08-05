@@ -731,7 +731,9 @@ button {
    Um único palco preso; os vídeos se revezam e a cópia entra e sai por
    marcadores de progresso. Nada "sobe de baixo": tudo acontece na mesma tela.
    -------------------------------------------------------------------------- */
-.scene { position: relative; background: var(--pine-deep); }
+/* 490vh: as distâncias de cada trecho do roteiro em rolagem. O celular tem a
+   sua (640vh) lá embaixo, na consulta de mídia. */
+.scene { position: relative; height: var(--cena-h, 490vh); --cena-h: 490vh; background: var(--pine-deep); }
 
 .scene__pin {
   position: sticky;
@@ -2116,6 +2118,13 @@ a.find__value:hover { color: var(--gold-light); }
      de sala, fundo verde liso. É ali que a cópia mora, sempre. Por isso os
      três blocos ancoram no rodapé da tela em vez de no centro: a composição
      do vídeo é que manda, não a do texto. */
+  /* 640vh e não 490: os 150vh a mais vão quase todos para a bagunça da mesa,
+     que passou de 0,74 para 1,4 tela de rolagem — a mesma animação de 8s
+     conduzida com quase o dobro de distância. O resto do roteiro mantém a
+     distância em pixels que já tinha; o que muda são as frações, e elas vêm
+     dos `data-beat-sm` no HTML. */
+  .scene { --cena-h: 640vh; }
+
   .scene__copy--hero,
   .scene__copy--mid,
   .scene__copy--left { align-items: flex-end; }
@@ -2140,17 +2149,59 @@ a.find__value:hover { color: var(--gold-light); }
   .scene-left .h2 { font-size: clamp(1.5625rem, 6.6vw, 2rem); max-width: 100%; }
   .scene-left .lede { font-size: 0.875rem; }
 
-  /* A LAVAGEM SOBE DO RODAPÉ. No desktop ela lava a metade esquerda porque o
-     texto é que fica à esquerda; aqui o texto está embaixo, então o mesmo
-     verde vem de baixo para cima e morre antes do topo — onde está o assunto
-     da cena (a estrutura, a mesa). Mesma cor, mesmo tempo, outra direção. */
-  .scene__wash {
+  /* ══ A LAVAGEM VERDE, CONDUZIDA PELA ROLAGEM ══════════════════════════════
+     No desktop ela lava a metade esquerda, porque o texto fica à esquerda;
+     aqui o texto está embaixo, então o mesmo verde vem de baixo para cima.
+
+     Duas mudanças de fundo em relação ao desktop:
+
+     1. QUEM ACENDE É A ROLAGEM, não um marcador. Ela tinha `transition:
+        opacity .55s` e entrava no mesmo instante em que o vídeo do zoom
+        terminava de rodar os últimos quadros — dois trabalhos concorrendo no
+        mesmo décimo de segundo, e o que se via era a lavagem engasgando.
+        Agora `--wash-o` sai direto do progresso: sem tempo próprio, não há o
+        que engasgar. Se um quadro cair, ela apenas acompanha a rolagem.
+
+     2. A ALTURA É VARIÁVEL. Fixa, ela chegava a 12% do topo da tela e cobria a
+        mesa inteira — o assunto da cena escondido pelo chão do texto. Agora
+        `--wash-h` encolhe o degradê contra o rodapé (`transform-origin`
+        embaixo): 0.74 na cena 02, 1.0 quando entram os cards, e 0.50 quando a
+        bagunça vai começar, descobrindo a mesa. A curva mora no main.js
+        (CHAO_LAVAGEM), medida contra o topo real de cada bloco.
+
+     `scaleY` e não stops de degradê calculados: mexer nos stops repinta a tela
+     inteira a cada quadro, que é exatamente o custo que estamos tirando daqui.
+     Assim a camada é rasterizada uma vez e o resto é compositor.
+
+     O seletor é `.scene .scene__wash` (e não só a classe) de propósito: precisa
+     empatar com `.scene__wash.is-on`, que ainda existe lá em cima e fixaria a
+     opacidade em 1. Empatando, vence por vir depois. */
+  .scene .scene__wash {
+    opacity: var(--wash-o, 0);
+    transform: scaleY(var(--wash-h, 1));
+    transform-origin: 50% 100%;
+    transition: none;
+    will-change: opacity, transform;
     background: linear-gradient(to top,
       rgba(15, 33, 26, 0.97) 0%,
-      rgba(15, 33, 26, 0.96) 52%,
-      rgba(15, 33, 26, 0.9) 64%,
-      rgba(15, 33, 26, 0.6) 74%,
-      rgba(15, 33, 26, 0) 88%);
+      rgba(15, 33, 26, 0.96) 46%,
+      rgba(15, 33, 26, 0.9) 62%,
+      rgba(15, 33, 26, 0.68) 70%,
+      rgba(15, 33, 26, 0.28) 76%,
+      rgba(15, 33, 26, 0) 82%);
+  }
+
+  /* Enquanto a lavagem recua, o que estava em cima dela sai junto: título,
+     texto e os quatro cards. Não é conteúdo perdido — eles já foram lidos ao
+     longo de quase uma tela de rolagem, e é o lugar deles que a mesa ocupa.
+     Fica o remate, sozinho, no rodapé, onde o verde continua cheio. Subir de
+     volta traz tudo de volta, porque quem manda é a classe da rolagem. */
+  .scene.is-recuando .scene-left > .h2,
+  .scene.is-recuando .scene-left > .lede,
+  .scene.is-recuando .scene-left > .pains {
+    opacity: 0;
+    transform: translateY(-12px);
+    transition: opacity 0.45s var(--ease), transform 0.45s var(--ease);
   }
 
   /* O véu da cena existe para o texto não brigar com a foto. No celular ele
@@ -2295,16 +2346,18 @@ a.find__value:hover { color: var(--gold-light); }
   .hero__title { font-size: 1.75rem; margin-bottom: 0.75rem; }
   .hero__sub { font-size: 0.8125rem; margin-bottom: 1rem; }
 
-  /* Numa tela curta o chão precisa subir mais: o bloco é alto e sobe. Aqui a
-     legibilidade ganha da paisagem — a sala aparece menos, mas o texto para
-     de cair em cima da janela clara. */
-  .scene__wash {
+  /* Numa tela curta o mesmo texto ocupa uma fatia maior da altura, então o
+     degradê inteiro é mais alto. Como a rolagem multiplica esta base por
+     `--wash-h`, alongar aqui alonga proporcionalmente os três trechos — o da
+     cena 02, o dos cards e o do recuo — sem precisar de outra curva no JS. */
+  .scene .scene__wash {
     background: linear-gradient(to top,
       rgba(15, 33, 26, 0.97) 0%,
-      rgba(15, 33, 26, 0.96) 56%,
+      rgba(15, 33, 26, 0.96) 52%,
       rgba(15, 33, 26, 0.9) 68%,
-      rgba(15, 33, 26, 0.55) 78%,
-      rgba(15, 33, 26, 0) 92%);
+      rgba(15, 33, 26, 0.68) 76%,
+      rgba(15, 33, 26, 0.28) 82%,
+      rgba(15, 33, 26, 0) 88%);
   }
   .scene__veil {
     background: linear-gradient(to bottom,

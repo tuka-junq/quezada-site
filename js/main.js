@@ -134,6 +134,20 @@
      ------------------------------------------------------------------------ */
   function initBreakpoint() {
     var quero = SMALL() ? 'sm' : 'lg';
+
+    // Quadro de tempos do celular. No 9:16 a mesa se bagunçando merece uma
+    // fatia bem maior do roteiro (a cena inteira também é mais alta lá), então
+    // tudo antes dela acontece mais cedo. Em vez de duplicar a cena no HTML,
+    // quem tem `-sm` troca o próprio valor ANTES de qualquer palco ser montado.
+    if (SMALL()) {
+      $$('[data-beat-sm], [data-range-sm], [data-live-sm]').forEach(function (el) {
+        ['beat', 'range', 'live'].forEach(function (nome) {
+          var v = el.getAttribute('data-' + nome + '-sm');
+          if (v) el.setAttribute('data-' + nome, v);
+        });
+      });
+    }
+
     $$('[data-only]').forEach(function (el) {
       if (el.getAttribute('data-only') !== quero) { el.parentNode.removeChild(el); return; }
 
@@ -161,6 +175,19 @@
   /* ------------------------------------------------------------------------
      3. Progresso de um palco preso (0 → 1 ao atravessar a seção)
      ------------------------------------------------------------------------ */
+  // Curva quebrada: dado o progresso, devolve o valor interpolado entre os
+  // pontos de apoio. É como a lavagem verde do celular sabe que altura ter em
+  // cada trecho da cena sem precisar de um marcador para cada degrau.
+  function rampa(p, pontos) {
+    if (p <= pontos[0][0]) return pontos[0][1];
+    for (var i = 1; i < pontos.length; i++) {
+      if (p > pontos[i][0]) continue;
+      var a = pontos[i - 1], b = pontos[i];
+      return a[1] + (b[1] - a[1]) * ((p - a[0]) / (b[0] - a[0]));
+    }
+    return pontos[pontos.length - 1][1];
+  }
+
   function stageProgress(el) {
     var rect = el.getBoundingClientRect();
     var span = rect.height - window.innerHeight;
@@ -414,9 +441,27 @@
     };
   }
 
+  /* A LAVAGEM VERDE DO CELULAR, TRECHO A TRECHO ------------------------------
+     Altura em fração do palco, medida do rodapé para cima. Ela era fixa e alta
+     demais: cobria até 12% do topo da tela e apagava a mesa, que é justamente o
+     assunto da cena. Agora acompanha o bloco de texto que está no ar — sobe
+     quando entram os cards, e RECUA quando a bagunça vai começar, descobrindo a
+     mesa inteira. Como quem conduz é a rolagem, subir de volta desfaz sozinho.
+     Os topos medidos dos blocos (celular): cena 02 a ~47% do rodapé, cena 03
+     com os cards a ~66%, o remate sozinho a ~14%. */
+  var CHAO_LAVAGEM = [
+    [0.19, 0.74],   // cena 02: chão só até onde o texto pede
+    [0.44, 0.74],
+    [0.53, 1.00],   // cena 03: sobe para caber título, texto e os quatro cards
+    [0.62, 1.00],
+    [0.73, 0.48],   // recuo: a mesa aparece e a animação pode acontecer
+    [1.00, 0.48]
+  ];
+
   function initStages() {
     var stages = $$('[data-scene], [data-stage]');
     if (!stages.length) return;
+    var PEQ = SMALL();
 
     stages.forEach(function (stage) {
       // vídeos conduzidos: por rolagem (scrub) ou por gatilho — de progresso
@@ -437,6 +482,7 @@
 
       var beats = $$('[data-beat]', stage);
       var bar   = $('.scene__progress i', stage);
+      var wash  = PEQ ? $('.scene__wash', stage) : null;
 
       Frame.add(function () {
         var rect = stage.getBoundingClientRect();
@@ -475,6 +521,20 @@
             if (vivo) { var pv = statics[j].play(); if (pv && pv.catch) pv.catch(function () {}); }
             else if (!statics[j].paused) statics[j].pause();
           }
+        }
+
+        // A lavagem do celular não é acesa por marcador: ela é DESENHADA pela
+        // rolagem. Sem transição de tempo não existe o "travar" de quando ela
+        // aparecia — se um quadro cair, ela simplesmente acompanha a rolagem.
+        // A opacidade sobe junto com a sala terminando de se formar; a altura
+        // segue a curva acima. As duas propriedades são de compositor.
+        if (wash) {
+          wash.style.setProperty('--wash-o', clamp((p - 0.18) / 0.07, 0, 1).toFixed(3));
+          wash.style.setProperty('--wash-h', rampa(p, CHAO_LAVAGEM).toFixed(3));
+          // título, texto e cards saem de cena junto com o recuo: é o espaço
+          // deles que a mesa ocupa. Só o remate fica, no rodapé, onde o verde
+          // continua cheio.
+          stage.classList.toggle('is-recuando', p >= 0.645);
         }
 
         if (bar) bar.style.setProperty('--p', p.toFixed(4));

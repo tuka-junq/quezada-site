@@ -56,21 +56,32 @@ transição é o mesmo enquadramento do hero, então o corte é invisível.
 cena, isto é, cerca de uma tela de rolagem. Esticado no tempo real dele a
 passagem arrasta; em faixa mais curta que esta ela fica apressada.
 
-**A linha do tempo da cena, em progresso (`p`):**
+**A linha do tempo da cena, em progresso (`p`).** São DUAS: o celular tem o seu
+próprio quadro de tempos, porque lá a cena é mais alta e a bagunça da mesa vale
+muito mais rolagem. Quem troca é o `initBreakpoint`, lendo os `-sm` do HTML.
 
-| p | o que acontece |
-|---|---|
-| 0 – 0.12 | hero |
-| 0.12 – 0.33 | zoom para dentro da sala (`data-scrub`) |
-| 0.33 | cena 02 + lavagem verde acendem **juntas e na hora** |
-| 0.60 | cena 03: texto e cards, com 300ms de respiro |
-| 0.78 | remate *"Quando percebe…"* (marcador próprio) |
-| 0.85 – 0.97 | a mesa se bagunça (`data-autoplay-at`) |
+| p (desktop) | p (celular) | o que acontece |
+|---|---|---|
+| 0 – 0.12 | 0 – 0.09 | hero |
+| 0.12 – 0.33 | 0.09 – 0.25 | zoom para dentro da sala (`data-scrub`) |
+| 0.33 | 0.25 | cena 02 + lavagem verde acendem **juntas e na hora** |
+| 0.60 | 0.47 | cena 03: texto e cards, com 300ms de respiro |
+| 0.78 | 0.62 | remate *"Quando percebe…"* (marcador próprio) |
+| — | 0.62 – 0.73 | **a lavagem recua** e título, texto e cards saem |
+| 0.85 – 0.97 | 0.72 – 0.98 | a mesa se bagunça (desktop `data-autoplay-at`, celular `data-scrub`) |
 
-**A cena tem 490vh, não mais.** Sobrava ~1500px de rolagem depois que o vídeo da
-mesa disparava, com a cena já encerrada e nada acontecendo. As distâncias de cada
-trecho continuam as mesmas em pixels — só a cauda foi cortada, para ~470px. Ao
-mexer nas faixas, é essa conta que importa: `fração × (altura − 100vh)`.
+**A altura mora na folha de estilo, em `--cena-h`** — 490vh no desktop, 640vh no
+celular. Não pode voltar para o `style=` do `<section>`: estilo em atributo vence
+qualquer regra de folha, então a consulta de mídia do celular era ignorada em
+silêncio (não é erro nenhum, a cena só continuava curta).
+
+Os 490vh já foram 660: sobrava ~1500px de rolagem depois que o vídeo da mesa
+disparava, com a cena encerrada e nada acontecendo. Os 640vh do celular são o
+contrário — 150vh a mais, quase todos para a bagunça da mesa, que passou de 0,74
+para **1,40 tela de rolagem** (de 625px para 1185px num aparelho de 844). Como o
+scrub amarra o quadro à rolagem, mais distância é a MESMA animação em ritmo mais
+calmo; não há nada para "desacelerar" além disto. Ao mexer nas faixas, é essa
+conta que importa: `fração × (altura − 100vh)`.
 
 **Suavidade da passagem** vem de três lugares e nenhum deles é a duração: o lerp
 do scrub (0.11 — quanto menor, mais o quadro persegue a rolagem em vez de saltar
@@ -262,13 +273,57 @@ aparelho depois não troca as camadas — mesmo compromisso do `pickSrc`.
 
 | | desktop | celular |
 |---|---|---|
-| sala parada (0.33–0.85) | vídeo pausado | **imagem** (`mesa-resp.webp`) |
+| altura da cena | 490vh | **640vh** |
+| sala parada | vídeo pausado | **imagem** (`mesa-resp.webp`) |
 | mesa se bagunçando | `data-autoplay-at` | **`data-scrub`**, quadro a quadro |
 | cópia | à esquerda, centro vertical | **rodapé da tela** |
-| lavagem verde | metade esquerda | **de baixo para cima** |
+| lavagem verde | metade esquerda, acesa por marcador | **de baixo para cima, desenhada pela rolagem** |
 
 A sala parada virar imagem é o que segura o peso: é o trecho mais longo da cena,
 e assim um vídeo já foi liberado e o outro ainda nem baixou.
+
+### A lavagem verde do celular é conduzida pela rolagem
+
+No desktop ela é simples: um marcador acende, `transition: opacity .55s`, pronto.
+No celular isso dava dois problemas ao mesmo tempo, e os dois se resolvem pela
+mesma via.
+
+**1. Ela engasgava ao aparecer.** Entrava no mesmo décimo de segundo em que o
+vídeo do zoom rodava os últimos quadros — dois trabalhos disputando o aparelho, e
+o que se via era a lavagem tropeçando. Agora `--wash-o` sai direto do progresso
+(`initStages` escreve, a folha lê): **sem tempo próprio, não há o que engasgar.**
+Se um quadro cair, ela apenas acompanha a rolagem, que é o que o olho espera.
+
+**2. Ela era alta demais e cobria a mesa.** Fixa, chegava a 12% do topo da tela —
+a sala inteira apagada pelo chão do texto, e a mesa é justamente o assunto da
+cena. Agora `--wash-h` encolhe o degradê contra o rodapé, e a altura acompanha o
+bloco que está no ar. A curva mora no `main.js`, em `CHAO_LAVAGEM`, e cada ponto
+dela foi medido contra o topo real dos blocos:
+
+| trecho | altura | onde o verde morre | topo do bloco |
+|---|---|---|---|
+| cena 02 | 0.74 | 39% do topo | 53% |
+| cena 03 (cards) | 1.00 | 18% do topo | 34% |
+| bagunça da mesa | 0.48 | **61% do topo** | só o remate, a 86% |
+
+Na cena 03 ela precisa mesmo ser alta: são quatro cards, e o bloco começa a 34%.
+Quem resolve não é encolher ali — é o **recuo**. Entre 0.62 e 0.73 a lavagem
+desce e título, texto e cards saem junto com ela (`.scene.is-recuando`): o lugar
+deles é o que a mesa ocupa. Fica só o remate, no rodapé, onde o verde continua
+cheio. Medido, o escurecimento sobre a mesa cai de **0.81 para 0.10** — de
+apagada a limpa — enquanto nenhum texto fica com menos de 0.81 de chão.
+
+Como quem conduz é a rolagem, **subir de volta desfaz tudo sozinho**: não há
+estado a guardar nem animação a reverter.
+
+⚠️ `scaleY` e não stops de degradê calculados em `calc()`. Mexer nos stops
+repinta a tela inteira a cada quadro — exatamente o custo que este trecho existe
+para tirar. Com `transform` a camada é rasterizada uma vez e o resto é
+compositor; num degradê liso a re-escala é invisível.
+
+⚠️ O seletor é `.scene .scene__wash`, e não `.scene__wash`. Precisa **empatar**
+com o `.scene__wash.is-on` da regra geral, que senão fixaria a opacidade em 1 e
+anularia a variável. Empatando, vence por vir depois.
 
 **O respiro do responsivo: um dedo nos lados, dois em cima e embaixo.**
 `--dedo: 44px` — não é chute, é a medida do alvo de toque (44pt na Apple, 48dp
@@ -297,6 +352,13 @@ inteira**, então quem cede é o bloco: abaixo de 800px de altura, corpo e respi
 da cena encolhem. A conta que vale conferir ao mexer em qualquer texto da cena é
 o **topo do bloco ficar abaixo de ~38% da altura da tela** — é até ali que vai a
 sala; o resto do quadro é chão.
+
+⚠️ **Ao medir opacidade em Chrome headless, emule o movimento.** Headless assume
+`prefers-reduced-motion: reduce`, e a folha de estilo responde a isso acendendo
+todos os marcadores de uma vez (`opacity: 1 !important`). Sem
+`Emulation.setEmulatedMedia` com `no-preference`, toda leitura de opacidade é
+falsa. E leia a opacidade num **filho**, não no `.beat--group`: o grupo é opaco
+por projeto (`opacity: 1`) e quem entra e sai são os filhos.
 
 **Os vídeos verticais são 9:16 e ancoram no topo** (`object-position: center
 top`). Num celular o `cover` corta só na lateral; num tablet em pé ele corta na

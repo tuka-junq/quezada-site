@@ -66,8 +66,13 @@
 <!-- 490vh, não 660: a cauda depois do vídeo da mesa era de ~1500px de rolagem
      com a cena já encerrada. As distâncias de cada trecho continuam as mesmas
      em pixels; só a sobra no fim foi cortada, para a seção seguinte vir logo
-     que a animação termina. -->
-<section class="scene" id="top" data-scene style="height: 490vh">
+     que a animação termina.
+     A altura mora na FOLHA DE ESTILO (`.scene { --cena-h }`), não aqui: no
+     celular ela vira 640vh, porque lá a bagunça da mesa recebe uma fatia bem
+     maior do roteiro. Como estilo em atributo vence qualquer regra de folha,
+     deixar os 490vh no `style=` fazia o celular continuar com a cena curta —
+     silenciosamente, porque não é erro nenhum. -->
+<section class="scene" id="top" data-scene>
   <div class="scene__pin">
 
     <!-- ══ Camadas, na ordem em que assumem a cena ══════════════════════════
@@ -75,8 +80,11 @@
          9:16 no celular. `data-only` diz de quem é cada camada — o que não é
          da tela atual sai do DOM antes de baixar qualquer byte (initBreakpoint
          no main.js). É por isso que NENHUMA delas tem `src` direto.
-         Os marcadores de texto (`data-beat`) são compartilhados: o roteiro é
-         um só, muda o quadro.
+         Os marcadores de texto (`data-beat`) são compartilhados, mas o CELULAR
+         tem o seu próprio quadro de tempos: onde existe `data-beat-sm` (ou
+         `-range-sm`/`-live-sm`), o initBreakpoint troca o valor antes de
+         qualquer palco começar. O roteiro é o mesmo; no celular a bagunça da
+         mesa dura muito mais rolagem e a lavagem verde tem uma etapa só dela.
          ══════════════════════════════════════════════════════════════════ -->
 
     <!-- ─── desktop, 16:9 ─────────────────────────────────────────────── -->
@@ -109,53 +117,58 @@
            data-src="assets/video/sala-desarrumada.mp4" data-src-sm="assets/video/sala-desarrumada-sm.mp4" aria-hidden="true"></video>
 
     <!-- ─── celular, 9:16 ─────────────────────────────────────────────────
-         Mesmas faixas de progresso do desktop, outro enquadramento. Duas
-         diferenças de fundo:
+         Outro enquadramento E outro quadro de tempos. Três diferenças de fundo:
          · a sala parada é IMAGEM (`mesa-resp.webp`), não um vídeo pausado —
            é o trecho mais longo da cena e assim os dois vídeos pesados ficam
            fora de cena, um já liberado e o outro ainda por baixar;
          · a mesa se bagunçando é `data-scrub`, conduzida quadro a quadro pela
-           rolagem, e não disparada por ela. -->
+           rolagem, e não disparada por ela;
+         · essa bagunça recebe 26% de uma cena de 640vh — cerca de 1,4 tela de
+           rolagem para os 8s de vídeo, contra 0,74 tela antes. Como o scrub
+           amarra o quadro à rolagem, mais distância é a MESMA animação em
+           ritmo mais calmo. Aqui as faixas já vêm no tempo do celular; não
+           precisam de `-sm` porque estas camadas só existem no celular. -->
     <img class="scene__layer scene__layer--poster" data-only="sm"
          data-src="assets/img/hero-resp-poster.webp" alt="" aria-hidden="true">
 
-    <video class="scene__layer" data-only="sm" data-live="0,0.16"
+    <video class="scene__layer" data-only="sm" data-live="0,0.12"
            autoplay muted loop playsinline preload="auto" aria-hidden="true"
            data-loop-webm="assets/video/hero-responsivo.webm"
            data-loop-mp4="assets/video/hero-responsivo.mp4"></video>
 
-    <video class="scene__layer" data-only="sm" data-scrub data-range="0.12,0.33" data-live="0.10,0.37"
+    <video class="scene__layer" data-only="sm" data-scrub data-range="0.09,0.25" data-live="0.07,0.29"
            muted playsinline preload="none"
            data-src="assets/video/transicao-sala-resp.mp4" aria-hidden="true"></video>
 
-    <img class="scene__layer" data-only="sm" data-live="0.31,0.85"
+    <img class="scene__layer" data-only="sm" data-live="0.23,0.74"
          data-src="assets/img/mesa-resp.webp" alt="" aria-hidden="true">
 
-    <!-- Faixa larga de propósito: 19% da cena para os 8s de vídeo, contra os
-         12% de antes. Como o scrub amarra o quadro à rolagem, faixa mais larga
-         é a MESMA animação em ritmo mais lento — os papéis caem com calma. -->
-    <video class="scene__layer" data-only="sm" data-scrub data-range="0.80,0.99" data-live="0.78,1"
+    <video class="scene__layer" data-only="sm" data-scrub data-range="0.72,0.98" data-live="0.70,1"
            muted playsinline preload="none"
            data-src="assets/video/sala-desarrumada-resp.mp4" aria-hidden="true"></video>
 
     <!-- último quadro da bagunça, congelado: entra por cima do vídeo no fim da
          faixa, para ele não ficar decodificando o que já parou de se mexer -->
-    <img class="scene__layer" data-only="sm" data-live="0.96,1"
+    <img class="scene__layer" data-only="sm" data-live="0.965,1"
          data-src="assets/img/mesa-bagunca-resp.webp" alt="" aria-hidden="true">
 
     <div class="scene__veil" aria-hidden="true"></div>
 
     <!-- A lavagem verde da metade esquerda. Entra junto com a cópia, sem
          espera, e morre antes da mesa, no canto direito, que continua limpa.
-         É ela que devolve o texto claro à cena. Subindo, sai junto. -->
-    <div class="scene__wash" data-beat="0.33,1" aria-hidden="true"></div>
+         É ela que devolve o texto claro à cena. Subindo, sai junto.
+         No CELULAR ela vem de baixo e não é acesa por marcador: quem manda na
+         opacidade e na altura dela é a rolagem, quadro a quadro (`--wash-o` e
+         `--wash-h`, escritos pelo initStages). O marcador continua aqui só
+         para o inventário de estados; a folha de estilo do celular sobrepõe. -->
+    <div class="scene__wash" data-beat="0.33,1" data-beat-sm="0.25,1" aria-hidden="true"></div>
 
     <div class="scene__stack">
 
       <!-- 01 · HERO -->
       <div class="scene__copy scene__copy--hero">
         <div class="shell shell--wide">
-          <div class="beat hero__block" data-beat="0,0.12">
+          <div class="beat hero__block" data-beat="0,0.12" data-beat-sm="0,0.09">
             <p class="eyebrow">Consultoria estratégica &amp; governança empresarial</p>
             <h1 class="hero__title">
               <span class="line-mask"><span>Sua empresa precisa</span></span>
@@ -186,7 +199,7 @@
            aparecerem ao mesmo tempo na volta. -->
       <div class="scene__copy scene__copy--mid">
         <div class="shell">
-          <div class="scene-mid beat beat--group beat--junto" data-beat="0.33,0.60">
+          <div class="scene-mid beat beat--group beat--junto" data-beat="0.33,0.60" data-beat-sm="0.25,0.47">
             <h2 class="h2">
               Sua empresa cresce, dá lucro.
               <span class="gold">Mas ainda espera por você para decidir.</span>
@@ -208,7 +221,7 @@
            marcador próprio: voltam a depender da rolagem, e desfazem na volta. -->
       <div class="scene__copy scene__copy--left">
         <div class="shell shell--wide">
-          <div class="scene-left beat beat--group" id="cena-operacao" data-beat="0.60,1">
+          <div class="scene-left beat beat--group" id="cena-operacao" data-beat="0.60,1" data-beat-sm="0.47,1">
             <h2 class="h2" style="--d:300ms">Quem decide quando você não está na sala?</h2>
             <p class="lede" style="--d:300ms">
               Enquanto o gráfico sobe, a falta de estrutura passa despercebida.
@@ -241,14 +254,14 @@
                  estilo deixa passar quem tem o seu): quem traz o remate é a
                  rolagem, e subir de volta o recolhe. O vídeo da mesa dispara
                  logo em seguida, em 0.66. -->
-            <p class="scene-kicker beat" data-beat="0.78,1">Quando percebe, a operação está um caos.</p>
+            <p class="scene-kicker beat" data-beat="0.78,1" data-beat-sm="0.62,1">Quando percebe, a operação está um caos.</p>
           </div>
         </div>
       </div>
 
     </div>
 
-    <div class="scene__scroll beat" data-beat="0,0.07" aria-hidden="true">
+    <div class="scene__scroll beat" data-beat="0,0.07" data-beat-sm="0,0.05" aria-hidden="true">
       <i></i><span>Role</span>
     </div>
 
