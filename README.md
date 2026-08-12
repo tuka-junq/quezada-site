@@ -17,12 +17,14 @@ npx serve .          # ou qualquer servidor estático
 
 ```
 index.html          marcação de todas as seções
+favicon.ico         ícone da raiz — é aqui que o rastreador procura
 css/style.css       design system inteiro (tokens do moodboard.md)
 js/main.js          motor de interação — um único rAF conduz tudo
+scripts/            utilitários fora do site (não vão para o navegador)
 assets/
   video/            .mp4 (principal) + .webm (loops)
   img/              fotos, capas e posters
-  logo/             máscaras alpha recortadas do logo oficial
+  logo/             máscaras alpha recortadas do logo oficial + ícones do site
   fonts/            Cormorant Garamond (títulos) + Raleway (texto), woff2 variável
 ```
 
@@ -487,6 +489,40 @@ normalizam a URL.
 *Av. Ipanema, 165 — Empresarial 18 do Forte, Barueri - SP — Sala 1114.* Aparece em
 três lugares (`.find__value`, o cartão `.map` e o rodapé) e nas duas queries do
 Google Maps dentro de `.map`. Se mudar, mude nos cinco.
+
+## Ícone do site na busca
+
+O ícone que o Google mostra ao lado do resultado **não é** o mesmo arquivo que a
+aba do navegador aceita. Ele tem duas exigências que o `favicon.png` original
+(180×154) não cumpria — e por isso o resultado saía com o globo genérico:
+
+| exigência | antes | agora |
+|---|---|---|
+| quadrado | 180×154 | sim |
+| múltiplo de 48px | não | 48 / 96 / 192 |
+| `/favicon.ico` na raiz | não existia | 16 + 32 + 48, quadros em PNG |
+
+Os quadrados são recortes do mesmo desenho da aba (`favicon.png`, caixa alfa
+8,5 → 160×147), centrados com 12% de folga. O `apple-touch-icon` é o único com
+fundo sólido — em pinho, porque o iOS pinta de preto o que estiver transparente.
+
+⚠️ **Os caminhos são absolutos a partir da raiz** (`/assets/logo/…`), não
+relativos: o ícone vale para o site inteiro, não para a página onde a tag
+aparece. Mesmo motivo do `og:image` — quem lê a tag é um rastreador, que não
+tem a página como base.
+
+Regerar: `powershell -File scripts/make-icons.ps1` a partir da raiz do site.
+Depois de publicar, o ícone novo
+só aparece na busca no próximo rastreamento (dias a semanas); dá para apressar
+pedindo a indexação da home no Search Console.
+
+## Medição
+
+**Google Tag Manager `GTM-NZGWVXPR`.** O trecho síncrono vai o mais alto
+possível no `<head>` — antes do `<title>` e de qualquer folha — e o `<noscript>`
+é o primeiro filho do `<body>`. É a única dependência externa do site; o resto
+continua sem build e sem pacote. Tags, gatilhos e consentimento vivem no painel
+do GTM, não aqui.
 
 ## Acessibilidade
 
