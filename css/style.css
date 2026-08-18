@@ -798,7 +798,15 @@ button {
   height: 100%;
   pointer-events: none;
 }
-.scene__copy > .shell { pointer-events: auto; width: 100%; }
+/* O `.shell` NÃO volta a receber ponteiro. Os três blocos de cópia dividem a
+   mesma célula do grid (`grid-area: 1/1`), então o `.shell` do último no DOM
+   (`--left`) fica por cima do hero cobrindo a mesma faixa da tela. E
+   `opacity: 0` não tira nada do teste de acerto: o bloco invisível continuava
+   ali, engolindo o clique dos botões do hero. Quem recebe ponteiro é só o
+   marcador ACESO — que é, por definição, o único que está visível. */
+.scene__copy > .shell { pointer-events: none; width: 100%; }
+.scene__copy .beat { pointer-events: none; }
+.scene__copy .beat.is-on { pointer-events: auto; }
 
 .scene__copy--hero { align-items: center; }
 /* Os dois blocos seguintes pousam sobre a parede branca da sala: o 02 mais à
