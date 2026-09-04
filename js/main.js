@@ -206,21 +206,23 @@
       var webm = el.getAttribute('data-loop-webm');
       var mp4  = el.getAttribute('data-loop-mp4');
       if (!webm && !mp4) return;              // scrub/autoplay: o palco cuida
-      // Ate o portao abrir o que se ve e o `poster` do proprio <video>, que ja
-      // esta pintado. As <source> so nascem aqui dentro -- se nascessem no
-      // HTML, o pre-scanner do navegador pediria o video antes de tudo.
-      Midia.quando(function () {
-        [[webm, 'video/webm'], [mp4, 'video/mp4']].forEach(function (par) {
-          if (!par[0]) return;
-          var s = document.createElement('source');
-          s.src = par[0];
-          s.type = par[1];
-          el.appendChild(s);
-        });
-        el.load();
-        var pr = el.play();
-        if (pr && pr.catch) pr.catch(function () {});
+      // O video em laco NAO passa pelo portao: ele e a cena de abertura, a
+      // primeira coisa que a pagina mostra. Preso ali, o visitante ficava
+      // varios segundos olhando uma imagem parada -- caro demais por alguns
+      // pontos de PageSpeed. Quem espera o portao sao os `data-scrub`
+      // pesados (1,7MB e 2,5MB), que so entram em cena depois de rolar.
+      // As <source> continuam nascendo aqui, e nao no HTML, para o
+      // pre-scanner nao baixar tambem as do breakpoint errado.
+      [[webm, 'video/webm'], [mp4, 'video/mp4']].forEach(function (par) {
+        if (!par[0]) return;
+        var s = document.createElement('source');
+        s.src = par[0];
+        s.type = par[1];
+        el.appendChild(s);
       });
+      el.load();
+      var pr = el.play();
+      if (pr && pr.catch) pr.catch(function () {});
     });
   }
 
@@ -774,21 +776,12 @@
      navegador pede um background inline assim que o elemento entra na arvore de
      renderizacao -- no carregamento, mesmo a cinco telas de distancia. Eram
      121KB dentro da janela do LCP. Agora o endereco mora em `data-bg-src` e so
-     vira estilo depois do portao.
-     A folha do lockup vem junto pelo mesmo motivo: mesmo sem bloquear a
-     pintura, ela disputava banda com a primeira tela. */
+     vira estilo depois do portao. */
   function initAdiados() {
     Midia.quando(function () {
       $$('[data-bg-src]').forEach(function (el) {
         el.style.backgroundImage = "url('" + el.getAttribute('data-bg-src') + "')";
       });
-      if (!$('link[data-lockup]')) {
-        var l = document.createElement('link');
-        l.rel = 'stylesheet';
-        l.href = 'css/logo-lockup.css';
-        l.setAttribute('data-lockup', '');
-        document.head.appendChild(l);
-      }
     });
   }
 

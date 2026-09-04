@@ -78,6 +78,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- O lockup da marca (24KB comprimidos) sai do caminho critico: media="print"
      faz o navegador baixar sem bloquear a pintura, e o onload devolve a folha
      para valer. Ele so aparece no menu mobile fechado e no rodape. -->
+<link rel="stylesheet" href="css/logo-lockup.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="css/logo-lockup.css"></noscript>
 
 <!-- `defer` no head, e nao <script> solto no fim do body: o navegador comeca a
@@ -170,8 +171,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <img class="scene__layer scene__layer--poster" data-only="lg"
          data-src="assets/img/transicao-poster.webp" alt="" aria-hidden="true">
 
-    <video class="scene__layer scene__layer--hero" data-only="lg" data-live="0,0.16"
-           muted loop playsinline preload="none" aria-hidden="true"
+    <video class="scene__layer" data-only="lg" data-live="0,0.16"
+           autoplay muted loop playsinline preload="auto" aria-hidden="true"
            data-loop-webm="assets/video/hero-estrutura.webm"
            data-loop-mp4="assets/video/hero-estrutura.mp4"></video>
 
@@ -210,8 +211,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <img class="scene__layer scene__layer--poster" data-only="sm"
          data-src="assets/img/hero-resp-poster.webp" alt="" aria-hidden="true">
 
-    <video class="scene__layer scene__layer--hero" data-only="sm" data-live="0,0.12"
-           muted loop playsinline preload="none" aria-hidden="true"
+    <video class="scene__layer" data-only="sm" data-live="0,0.12"
+           autoplay muted loop playsinline preload="auto" aria-hidden="true"
            data-loop-webm="assets/video/hero-responsivo.webm"
            data-loop-mp4="assets/video/hero-responsivo.mp4"></video>
 
