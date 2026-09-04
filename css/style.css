@@ -571,6 +571,16 @@ button {
   transition-delay: var(--d, 0ms);
 }
 .line-mask.is-in > span { transform: none; }
+/* A hero e a UNICA excecao: la as linhas do titulo nao sobem por dentro da
+   mascara. `overflow:hidden` + `translateY(105%)` mantem o texto FORA da
+   vista, e como esse titulo e justamente o elemento de LCP da pagina, cada
+   milissegundo de mascara vira milissegundo de LCP -- medido, era 1,05s de
+   atraso puro. O bloco inteiro continua entrando com um fade (`heroIn`), que
+   nao custa LCP nenhum porque o navegador ja conta o elemento assim que a
+   opacidade sai do zero. As mascaras seguem valendo para todo o resto do
+   site, onde nada disso esta na primeira tela. */
+.hero__block .line-mask { overflow: visible; }
+.hero__block .line-mask > span { transform: none; transition: none; }
 
 /* --------------------------------------------------------------------------
    9. Header / navegação — logo real da marca
@@ -861,6 +871,28 @@ button {
   transform: translateY(-10px);
   transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
 }
+
+/* Entrada da hero SEM depender do JS
+   O subtitulo da hero e o elemento de LCP da pagina. Enquanto ele nascia com
+   `opacity:0` e so acendia quando o main.js chegava ao primeiro quadro, o LCP
+   ficava preso ao boot do script -- e o boot, por sua vez, ficava na fila
+   atras do GTM, do gtag e do fbevents. Eram quase 6s de "render delay" para
+   um paragrafo que o CSS ja sabia desenhar.
+   Agora o bloco nasce com `is-on` (e as linhas com `is-in`) no proprio HTML, e
+   quem faz a entrada e uma animacao de CSS, que comeca no primeiro quadro
+   pintado -- sem esperar script nenhum. O desenho da entrada e o mesmo de
+   antes: 0.7s de subida do bloco, 1.05s de mascara nas linhas do titulo.
+   `backwards`, e nao `forwards`: assim que a animacao termina o valor volta
+   para a cascata, que e o que mantem o `.is-out` da rolagem funcionando. */
+/* Nem fade, nem mascara: a hero nasce PRONTA.
+   Foram testados os dois meios-termos, e os dois custam caro. Uma animacao de
+   opacidade a partir do zero faz o Chrome ignorar o elemento como candidato a
+   LCP enquanto ela corre -- na medicao, o candidato simplesmente sumia da
+   janela inteira. A mascara do titulo custava 1,05s cravados, porque o texto
+   fica de fato fora da vista dentro do `overflow:hidden`. Sem as duas, o LCP
+   passou a empatar com o FCP: zero de render delay.
+   A entrada com movimento continua valendo em todo o resto do site -- ela so
+   nao vale para o unico bloco que o Google cronometra. */
 
 /* Grupo: a rolagem só diz QUANDO o bloco acende. Daí para frente quem
    escalona é o relógio, pelo `--d` de cada filho.

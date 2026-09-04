@@ -62,9 +62,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 }
 </script>
 
-<link rel="preload" href="assets/fonts/raleway.regular.ttf" as="font" type="font/ttf" crossorigin>
-<link rel="preload" href="assets/fonts/raleway.semibold.ttf" as="font" type="font/ttf" crossorigin>
+<!-- woff2, e nao ttf. As duas linhas antigas mandavam o navegador baixar
+     261KB de TrueType em prioridade alta que a pagina NUNCA usa: o @font-face
+     lista o woff2 primeiro, entao o motor de fontes escolhe o woff2 e larga o
+     ttf (que so existe como ultimo recurso). Pior, o `raleway.semibold.ttf`
+     nem aparece no CSS -- eram 130KB baixados para nada, disputando a fila com
+     o CSS e o main.js no 4G. Aqui vao os dois arquivos que a primeira tela
+     realmente pede: a Raleway do subtitulo e a Cormorant do titulo. -->
+<link rel="preload" href="assets/fonts/raleway.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/cormorant-garamond.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="css/style.css">
+
+<!-- `defer` no head, e nao <script> solto no fim do body: o navegador comeca a
+     baixar o main.js junto com o CSS, em vez de so quando termina de ler os
+     51KB de HTML, e executa no DOMContentLoaded -- antes dos scripts que o GTM
+     injeta de forma assincrona. E o mesmo momento de execucao de antes, so que
+     com o download adiantado. -->
+<script src="js/main.js" defer></script>
+
+<!-- Aperto de mao adiantado com quem o GTM vai chamar. Sem isso, DNS + TLS de
+     cada host so comecam quando o script e pedido, ja com a pagina montada. -->
+<link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+<link rel="preconnect" href="https://connect.facebook.net" crossorigin>
 </head>
 <body>
 
@@ -221,12 +240,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- 01 · HERO -->
       <div class="scene__copy scene__copy--hero">
         <div class="shell shell--wide">
-          <div class="beat hero__block" data-beat="0,0.12" data-beat-sm="0,0.09">
+          <div class="beat hero__block is-on" data-beat="0,0.12" data-beat-sm="0,0.09">
             <p class="eyebrow">Consultoria estratégica &amp; governança empresarial</p>
             <h1 class="hero__title">
-              <span class="line-mask"><span>Sua empresa precisa</span></span>
-              <span class="line-mask"><span class="gold" style="--d:80ms">crescer sem depender</span></span>
-              <span class="line-mask"><span style="--d:160ms"><span class="gold">de você</span> para tudo.</span></span>
+              <span class="line-mask is-in"><span>Sua empresa precisa</span></span>
+              <span class="line-mask is-in"><span class="gold" style="--d:80ms">crescer sem depender</span></span>
+              <span class="line-mask is-in"><span style="--d:160ms"><span class="gold">de você</span> para tudo.</span></span>
             </h1>
             <p class="hero__sub">
               Estruturamos decisões, relações societárias, contratos e riscos jurídicos para que sua
@@ -458,17 +477,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <div class="duo__pin">
 
     <div class="duo__figure">
-      <img class="duo__layer duo__layer--base" src="assets/img/duo-base.webp"
+      <img class="duo__layer duo__layer--base" loading="lazy" src="assets/img/duo-base.webp"
            alt="Angelson e Fabiana Quezada sentados à mesa com o símbolo da Quezada." decoding="async">
-      <img class="duo__layer duo__layer--green" src="assets/img/duo-verde.webp"
+      <img class="duo__layer duo__layer--green" loading="lazy" src="assets/img/duo-verde.webp"
            srcset="assets/img/duo-verde-sm.webp 960w, assets/img/duo-verde.webp 1920w" sizes="100vw"
            alt="" aria-hidden="true" decoding="async">
 
       <div class="duo__glass duo__glass--left glass" aria-hidden="true"></div>
       <div class="duo__glass duo__glass--right glass" aria-hidden="true"></div>
 
-      <img class="duo__layer duo__layer--person duo__layer--angelson" src="assets/img/duo-cutout.webp" alt="" aria-hidden="true" decoding="async">
-      <img class="duo__layer duo__layer--person duo__layer--fabiana" src="assets/img/duo-cutout.webp" alt="" aria-hidden="true" decoding="async">
+      <img class="duo__layer duo__layer--person duo__layer--angelson" loading="lazy" src="assets/img/duo-cutout.webp" alt="" aria-hidden="true" decoding="async">
+      <img class="duo__layer duo__layer--person duo__layer--fabiana" loading="lazy" src="assets/img/duo-cutout.webp" alt="" aria-hidden="true" decoding="async">
     </div>
 
     <div class="duo__intro">
@@ -631,7 +650,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="bookstage__grid">
 
         <div class="bookstage__media" id="livro-arquitetura">
-          <img src="assets/img/capa-arquitetura.webp" alt="Capa do livro Arquitetura da Ordem" decoding="async">
+          <img loading="lazy" src="assets/img/capa-arquitetura.webp" alt="Capa do livro Arquitetura da Ordem" decoding="async">
           <video data-scrub muted playsinline preload="none"
                  data-src="assets/video/livro-arquitetura.mp4" data-src-sm="assets/video/livro-arquitetura-sm.mp4" aria-hidden="true"></video>
         </div>
@@ -678,7 +697,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="bookstage__grid">
 
         <div class="bookstage__media" id="livro-pensamento">
-          <img src="assets/img/capa-pensamento.webp" alt="Capa do livro Pensamento Sistêmico Volume II" decoding="async">
+          <img loading="lazy" src="assets/img/capa-pensamento.webp" alt="Capa do livro Pensamento Sistêmico Volume II" decoding="async">
           <video data-scrub muted playsinline preload="none"
                  data-src="assets/video/livro-pensamento.mp4" data-src-sm="assets/video/livro-pensamento-sm.mp4" aria-hidden="true"></video>
         </div>
@@ -908,6 +927,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
 </footer>
 
-<script src="js/main.js"></script>
+
 </body>
 </html>
