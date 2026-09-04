@@ -132,6 +132,45 @@
      Girar o aparelho depois não troca as camadas — é o mesmo compromisso do
      `pickSrc`, e trocar no meio da rolagem custaria um download novo.
      ------------------------------------------------------------------------ */
+  /* ------------------------------------------------------------------------
+     Portao da midia pesada
+     A cena de abertura pesa 3,4MB de video no celular e 11MB no computador. Nada
+     disso e preciso para a PRIMEIRA TELA: o que se ve nela e o poster do video
+     (12-30KB) e o texto do hero. Mas tudo era pedido durante o carregamento --
+     o video em laco por `preload="auto"`, e a transicao porque a margem de
+     pre-carga do scrub (`range[0] - 0.14`) e MAIOR que o proprio gatilho
+     (0.09), o que tornava a condicao sempre verdadeira no topo da pagina.
+     Agora quem pede midia pesada passa por aqui. O portao abre no PRIMEIRO
+     destes: a pessoa rolar (a a partir dai ela precisa mesmo do video), a
+     janela terminar de carregar, ou 2,5s de relogio. Quem rola na hora nao
+     espera nada; quem fica parado lendo o hero recebe o video depois, por cima
+     do poster, sem perceber a troca.
+     ------------------------------------------------------------------------ */
+  var Midia = (function () {
+    var aberto = false, fila = [];
+    function abrir() {
+      if (aberto) return;
+      aberto = true;
+      window.removeEventListener('scroll', abrir);
+      window.removeEventListener('wheel', abrir);
+      window.removeEventListener('touchstart', abrir);
+      var f = fila; fila = [];
+      for (var i = 0; i < f.length; i++) f[i]();
+    }
+    ['scroll', 'wheel', 'touchstart'].forEach(function (e) {
+      window.addEventListener(e, abrir, { passive: true, once: true });
+    });
+    window.addEventListener('load', function () {
+      if (window.requestIdleCallback) requestIdleCallback(abrir, { timeout: 1200 });
+      else setTimeout(abrir, 200);
+    });
+    setTimeout(abrir, 2500);
+    return {
+      aberto: function () { return aberto; },
+      quando: function (fn) { if (aberto) fn(); else fila.push(fn); }
+    };
+  })();
+
   function initBreakpoint() {
     var quero = SMALL() ? 'sm' : 'lg';
 
@@ -159,16 +198,21 @@
       var webm = el.getAttribute('data-loop-webm');
       var mp4  = el.getAttribute('data-loop-mp4');
       if (!webm && !mp4) return;              // scrub/autoplay: o palco cuida
-      [[webm, 'video/webm'], [mp4, 'video/mp4']].forEach(function (par) {
-        if (!par[0]) return;
-        var s = document.createElement('source');
-        s.src = par[0];
-        s.type = par[1];
-        el.appendChild(s);
+      // Ate o portao abrir o que se ve e o `poster` do proprio <video>, que ja
+      // esta pintado. As <source> so nascem aqui dentro -- se nascessem no
+      // HTML, o pre-scanner do navegador pediria o video antes de tudo.
+      Midia.quando(function () {
+        [[webm, 'video/webm'], [mp4, 'video/mp4']].forEach(function (par) {
+          if (!par[0]) return;
+          var s = document.createElement('source');
+          s.src = par[0];
+          s.type = par[1];
+          el.appendChild(s);
+        });
+        el.load();
+        var pr = el.play();
+        if (pr && pr.catch) pr.catch(function () {});
       });
-      el.load();
-      var pr = el.play();
-      if (pr && pr.catch) pr.catch(function () {});
     });
   }
 
@@ -247,6 +291,10 @@
       // algo que ninguém vai ver.
       maybeLoad: function (p) {
         if (loaded || video.offsetParent === null) return;
+        // O portao primeiro: no topo da pagina `range[0] - 0.14` chega a ser
+        // negativo, e era isso que fazia a transicao de 1,7MB (celular) e de
+        // 6,1MB (computador) baixar sempre, no scroll 0.
+        if (!Midia.aberto()) return;
         if (p >= range[0] - 0.14) load();
       },
       // p = progresso da cena inteira
@@ -355,6 +403,7 @@
       el: video,
       maybeLoad: function (p) {
         if (loaded) return;
+        if (!Midia.aberto()) return;
         if (afterEl) { if (p >= 0.3) load(); }
         else if (p >= at - 0.3) load();
       },

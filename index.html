@@ -71,7 +71,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
      realmente pede: a Raleway do subtitulo e a Cormorant do titulo. -->
 <link rel="preload" href="assets/fonts/raleway.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/cormorant-garamond.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="css/style.css">
+<!-- o .min, e nao o style.css: a fonte comentada tem 145KB e nao precisa
+     chegar ao navegador. Quem mexe no CSS roda `node scripts/build-css.mjs`. -->
+<link rel="stylesheet" href="css/style.min.css">
+
+<!-- O lockup da marca (24KB comprimidos) sai do caminho critico: media="print"
+     faz o navegador baixar sem bloquear a pintura, e o onload devolve a folha
+     para valer. Ele so aparece no menu mobile fechado e no rodape. -->
+<link rel="stylesheet" href="css/logo-lockup.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="css/logo-lockup.css"></noscript>
 
 <!-- `defer` no head, e nao <script> solto no fim do body: o navegador comeca a
      baixar o main.js junto com o CSS, em vez de so quando termina de ler os
@@ -164,7 +172,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
          data-src="assets/img/transicao-poster.webp" alt="" aria-hidden="true">
 
     <video class="scene__layer" data-only="lg" data-live="0,0.16"
-           autoplay muted loop playsinline preload="auto" aria-hidden="true"
+           muted loop playsinline preload="none" aria-hidden="true"
+           poster="assets/img/hero-poster.webp"
            data-loop-webm="assets/video/hero-estrutura.webm"
            data-loop-mp4="assets/video/hero-estrutura.mp4"></video>
 
@@ -204,7 +213,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
          data-src="assets/img/hero-resp-poster.webp" alt="" aria-hidden="true">
 
     <video class="scene__layer" data-only="sm" data-live="0,0.12"
-           autoplay muted loop playsinline preload="auto" aria-hidden="true"
+           muted loop playsinline preload="none" aria-hidden="true"
+           poster="assets/img/hero-resp-poster.webp"
            data-loop-webm="assets/video/hero-responsivo.webm"
            data-loop-mp4="assets/video/hero-responsivo.mp4"></video>
 
