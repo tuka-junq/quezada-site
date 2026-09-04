@@ -211,16 +211,20 @@
       // varios segundos olhando uma imagem parada -- caro demais por alguns
       // pontos de PageSpeed. Quem espera o portao sao os `data-scrub`
       // pesados (1,7MB e 2,5MB), que so entram em cena depois de rolar.
-      // As <source> continuam nascendo aqui, e nao no HTML, para o
-      // pre-scanner nao baixar tambem as do breakpoint errado.
-      [[webm, 'video/webm'], [mp4, 'video/mp4']].forEach(function (par) {
-        if (!par[0]) return;
-        var s = document.createElement('source');
-        s.src = par[0];
-        s.type = par[1];
-        el.appendChild(s);
-      });
-      el.load();
+      // A fonte continua nascendo aqui, e nao no HTML, para o pre-scanner nao
+      // baixar tambem a do breakpoint errado.
+      //
+      // UMA fonte so, escolhida aqui. Montar as duas <source> e chamar load()
+      // fazia o navegador baixar o webm E o mp4 INTEIROS -- medido no
+      // Lighthouse: 598KB + 1136KB, quando so um e reproduzido. O elemento
+      // nasce com preload="auto", entao anexar a primeira <source> ja comeca o
+      // download; o load() seguinte reiniciava a selecao com a lista completa.
+      // Atribuir src direto dispara o algoritmo de carga uma unica vez e
+      // dispensa o load().
+      var podeWebm = !!(webm && el.canPlayType && el.canPlayType('video/webm') !== '');
+      var fonte = podeWebm ? webm : (mp4 || webm);
+      if (!fonte) return;
+      el.src = fonte;
       var pr = el.play();
       if (pr && pr.catch) pr.catch(function () {});
     });
