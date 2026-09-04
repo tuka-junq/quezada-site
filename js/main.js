@@ -154,6 +154,7 @@
       window.removeEventListener('scroll', abrir);
       window.removeEventListener('wheel', abrir);
       window.removeEventListener('touchstart', abrir);
+      document.documentElement.classList.add('midia-on');
       var f = fila; fila = [];
       for (var i = 0; i < f.length; i++) f[i]();
     }
@@ -191,7 +192,14 @@
       if (el.getAttribute('data-only') !== quero) { el.parentNode.removeChild(el); return; }
 
       if (el.tagName === 'IMG') {
-        el.src = el.getAttribute('data-src');
+        // O poster (sem `data-live`, `opacity: 1`) e a unica imagem que a
+        // primeira tela mostra: essa vem na hora. As outras camadas so
+        // aparecem a partir de 23% da rolagem, e somavam 143KB dentro da
+        // janela do LCP -- essas passam pelo portao.
+        var faixa = nums(el.getAttribute('data-live'), null);
+        var cedo = !faixa || faixa[0] <= 0;
+        if (cedo) el.src = el.getAttribute('data-src');
+        else Midia.quando(function () { el.src = el.getAttribute('data-src'); });
         return;
       }
       // vídeo em laço: as <source> são montadas agora, nunca no HTML
@@ -761,6 +769,29 @@
      o efeito "bugando". Aqui um único `mousemove` na seção decide quem está
      em foco, e basta sair da zona central para tudo voltar ao normal.
      ------------------------------------------------------------------------ */
+  /* Os fundos da secao "Onde entramos" e a folha do lockup
+     Os tres fundos moravam em `style="background-image:url(...)"` no HTML, e o
+     navegador pede um background inline assim que o elemento entra na arvore de
+     renderizacao -- no carregamento, mesmo a cinco telas de distancia. Eram
+     121KB dentro da janela do LCP. Agora o endereco mora em `data-bg-src` e so
+     vira estilo depois do portao.
+     A folha do lockup vem junto pelo mesmo motivo: mesmo sem bloquear a
+     pintura, ela disputava banda com a primeira tela. */
+  function initAdiados() {
+    Midia.quando(function () {
+      $$('[data-bg-src]').forEach(function (el) {
+        el.style.backgroundImage = "url('" + el.getAttribute('data-bg-src') + "')";
+      });
+      if (!$('link[data-lockup]')) {
+        var l = document.createElement('link');
+        l.rel = 'stylesheet';
+        l.href = 'css/logo-lockup.css';
+        l.setAttribute('data-lockup', '');
+        document.head.appendChild(l);
+      }
+    });
+  }
+
   function initFronts() {
     var sec = $('[data-fronts]');
     if (!sec || COARSE) return;
@@ -1000,6 +1031,7 @@
     initReveal();
     initStats();
     initFronts();
+    initAdiados();
     initDuo();
     initFaq();
     initShine();

@@ -78,7 +78,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- O lockup da marca (24KB comprimidos) sai do caminho critico: media="print"
      faz o navegador baixar sem bloquear a pintura, e o onload devolve a folha
      para valer. Ele so aparece no menu mobile fechado e no rodape. -->
-<link rel="stylesheet" href="css/logo-lockup.css" media="print" onload="this.media='all'">
 <noscript><link rel="stylesheet" href="css/logo-lockup.css"></noscript>
 
 <!-- `defer` no head, e nao <script> solto no fim do body: o navegador comeca a
@@ -171,9 +170,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <img class="scene__layer scene__layer--poster" data-only="lg"
          data-src="assets/img/transicao-poster.webp" alt="" aria-hidden="true">
 
-    <video class="scene__layer" data-only="lg" data-live="0,0.16"
+    <video class="scene__layer scene__layer--hero" data-only="lg" data-live="0,0.16"
            muted loop playsinline preload="none" aria-hidden="true"
-           poster="assets/img/hero-poster.webp"
            data-loop-webm="assets/video/hero-estrutura.webm"
            data-loop-mp4="assets/video/hero-estrutura.mp4"></video>
 
@@ -212,9 +210,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <img class="scene__layer scene__layer--poster" data-only="sm"
          data-src="assets/img/hero-resp-poster.webp" alt="" aria-hidden="true">
 
-    <video class="scene__layer" data-only="sm" data-live="0,0.12"
+    <video class="scene__layer scene__layer--hero" data-only="sm" data-live="0,0.12"
            muted loop playsinline preload="none" aria-hidden="true"
-           poster="assets/img/hero-resp-poster.webp"
            data-loop-webm="assets/video/hero-responsivo.webm"
            data-loop-mp4="assets/video/hero-responsivo.mp4"></video>
 
@@ -402,9 +399,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!-- ══════════════════════ 05 · ONDE A QUEZADA ENTRA ═══════════════════════ -->
 <section class="section fronts-sec stack" id="frentes" data-fronts>
-  <div class="fronts__bg is-on" data-bg="base" style="background-image:url('assets/img/frentes-base.webp')" aria-hidden="true"></div>
-  <div class="fronts__bg" data-bg="a" style="background-image:url('assets/img/frente-assessoria.webp')" aria-hidden="true"></div>
-  <div class="fronts__bg" data-bg="b" style="background-image:url('assets/img/frente-governanca.webp')" aria-hidden="true"></div>
+  <div class="fronts__bg is-on" data-bg="base" data-bg-src="assets/img/frentes-base.webp" aria-hidden="true"></div>
+  <div class="fronts__bg" data-bg="a" data-bg-src="assets/img/frente-assessoria.webp" aria-hidden="true"></div>
+  <div class="fronts__bg" data-bg="b" data-bg-src="assets/img/frente-governanca.webp" aria-hidden="true"></div>
   <div class="fronts__veil" aria-hidden="true"></div>
 
   <div class="shell shell--wide">

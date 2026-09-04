@@ -1259,15 +1259,26 @@ button {
   color: var(--pine);
 }
 
+/* A marca d'agua espera o portao da midia
+   O `simbolo-mask.png` tem 67KB e era pedido durante o carregamento, porque o
+   CSS que o referencia bloqueia a renderizacao. Para uma decoracao a 3,5% de
+   opacidade, atras de todo o conteudo, era o pior negocio da pagina inteira.
+   A pintura mora junto da mascara (e a opacidade comeca em zero) porque sem a
+   mascara o elemento seria um retangulo solido -- discreto a 3,5%, mas visivel.
+   `midia-on` e posto no <html> pelo portao, no main.js. */
 .watermark {
   position: absolute;
   pointer-events: none;
+  opacity: 0;
+}
+.midia-on .watermark {
   background: var(--pine);
   opacity: 0.035;
   -webkit-mask: url('../assets/logo/simbolo-mask.png') center / contain no-repeat;
   mask: url('../assets/logo/simbolo-mask.png') center / contain no-repeat;
 }
-.section--dark .watermark, .section--deep .watermark { background: var(--gold); opacity: 0.05; }
+.midia-on .section--dark .watermark,
+.midia-on .section--deep .watermark { background: var(--gold); opacity: 0.05; }
 
 /* --------------------------------------------------------------------------
    12. Seção 05 — Duas frentes
