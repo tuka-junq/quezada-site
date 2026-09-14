@@ -1012,6 +1012,117 @@
   }
 
   /* ------------------------------------------------------------------------
+     Medição de percurso
+
+     Responde duas perguntas que nenhum painel de anúncio responde: quanto
+     tempo a pessoa realmente ficou, e por onde ela passou.
+
+     Três decisões que valem explicação:
+
+     1. TEMPO ENGAJADO, não tempo de sessão. O relógio para quando a aba sai
+        de foco. Sem isso, a aba esquecida a tarde toda entra na média e o
+        número vira ficção.
+
+     2. A FAIXA DO MEIO decide quem está "ativa". O rootMargin corta 45% em
+        cima e 45% embaixo, sobrando uma tira no centro da tela. Uma seção só
+        conta enquanto cruza essa tira. É o que torna a medida robusta para
+        seção maior que a viewport (threshold alto nunca dispararia) e garante
+        que só uma esteja ativa por vez — os tempos somam o total, não o dobro.
+
+     3. UM ENVIO POR VISITA, no primeiro momento em que a página se esconde.
+        Não um evento por seção: o plano Hobby da Vercel tem teto de eventos no
+        mês, e 8 eventos por visitante o queimam à toa. Mandar na saída também
+        é o único jeito honesto — no meio da visita ainda não se sabe o total.
+     ------------------------------------------------------------------------ */
+  function initMedicao() {
+    var SECOES = ['top', 'conscientizacao', 'frentes', 'quem-conduz',
+                  'planos', 'livros', 'contato', 'faq'];
+
+    if (!('IntersectionObserver' in window)) return;
+
+    var tempo = {};        // id -> ms acumulados dentro da faixa
+    var desde = {};        // id -> instante em que entrou (0 = fora)
+    var ordem = [];        // ordem de primeira aparição
+    var fundo = -1;        // índice da seção mais profunda alcançada
+    var engajado = 0;      // ms de página visível
+    var relogio = Date.now();
+    var enviado = false;
+
+    SECOES.forEach(function (id) { tempo[id] = 0; desde[id] = 0; });
+
+    function fecharSecao(id, agora) {
+      if (!desde[id]) return;
+      tempo[id] += agora - desde[id];
+      desde[id] = 0;
+    }
+
+    // Pausa tudo: o relógio de engajamento e o de cada seção aberta.
+    function pausar() {
+      var agora = Date.now();
+      engajado += agora - relogio;
+      SECOES.forEach(function (id) { fecharSecao(id, agora); });
+    }
+
+    function retomar() {
+      relogio = Date.now();
+      // as seções reabrem sozinhas: o observer reavalia ao voltar o foco
+    }
+
+    var io = new IntersectionObserver(function (entradas) {
+      var agora = Date.now();
+      entradas.forEach(function (en) {
+        var id = en.target.id;
+        if (tempo[id] === undefined) return;
+
+        if (en.isIntersecting) {
+          if (!desde[id]) desde[id] = agora;
+          if (ordem.indexOf(id) === -1) ordem.push(id);
+          var i = SECOES.indexOf(id);
+          if (i > fundo) fundo = i;
+        } else {
+          fecharSecao(id, agora);
+        }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+
+    SECOES.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) io.observe(el);
+    });
+
+    function enviar() {
+      if (enviado) return;
+      enviado = true;
+      pausar();
+
+      // iniciais na ordem de leitura: "t-c-f-p" conta a história em 1 campo
+      var trilha = ordem.map(function (id) { return id.charAt(0); }).join('');
+
+      var dados = {
+        seg: Math.round(engajado / 1000),
+        fundo: fundo >= 0 ? SECOES[fundo] : 'nenhuma',
+        vistas: ordem.length,
+        trilha: trilha,
+        planos: Math.round(tempo['planos'] / 1000),
+        contato: Math.round(tempo['contato'] / 1000)
+      };
+
+      // o va() só existe se o script da Vercel carregou; sem ele, silêncio
+      if (typeof window.va === 'function') {
+        window.va('event', { name: 'percurso', data: dados });
+      }
+    }
+
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'hidden') { enviar(); }
+      else { retomar(); }
+    });
+
+    // Safari no iOS nem sempre entrega o visibilitychange ao fechar a aba
+    window.addEventListener('pagehide', enviar);
+  }
+
+  /* ------------------------------------------------------------------------
      Boot
      ------------------------------------------------------------------------ */
   function boot() {
@@ -1032,6 +1143,8 @@
     initDuo();
     initFaq();
     initShine();
+    // a medicao e acessorio: se quebrar, nao pode levar o site junto
+    try { initMedicao(); } catch (e) {}
 
     // os cards das frentes são conduzidos pelo initFronts, que compõe a
     // inclinação com a escala de foco
