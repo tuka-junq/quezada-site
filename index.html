@@ -943,10 +943,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      entao nao depende de consentimento. ~1KB e `defer`: nao disputa nada com
      a primeira pintura.
 
-     O stub do window.va precisa existir antes de qualquer chamada: o
-     initMedicao() do main.js dispara `va('event')` na saida da pagina, e o
-     script real pode nem ter chegado. A fila (vaq) segura os eventos ate la.
-     Precisa estar ATIVADO no painel do projeto, senao o script responde 404.
+     Mede so visita e origem do trafego. O percurso por secao NAO passa por
+     aqui: evento customizado e recurso do plano Pro, entao o initMedicao()
+     manda direto para /api/evento.
+
+     Ativar no painel nao basta: a Vercel so serve este arquivo em deploys
+     criados DEPOIS da ativacao. Se responder 404, e isso — refaca o deploy.
      ═══════════════════════════════════════════════════════════════════════ -->
 <script>
   window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };

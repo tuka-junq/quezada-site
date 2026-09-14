@@ -14,7 +14,10 @@ const API_VERSION = 'v23.0';
 
 // Evento que nao estiver aqui e recusado. O endpoint e publico: sem essa
 // trava qualquer um poderia injetar conversao falsa e sujar a otimizacao.
-const EVENTOS_PERMITIDOS = new Set(['Lead', 'ViewContent', 'PageView', 'Interesse']);
+// 'Percurso' nao tem par no navegador: e so server-side. O plano Hobby da Vercel
+// nao da eventos customizados (o painel manda fazer upgrade para Pro), entao o
+// tempo por secao vem parar aqui — e de quebra vira publico de remarketing.
+const EVENTOS_PERMITIDOS = new Set(['Lead', 'ViewContent', 'PageView', 'Interesse', 'Percurso']);
 
 const ORIGENS_PERMITIDAS = [
   'https://www.quezada.com.br',

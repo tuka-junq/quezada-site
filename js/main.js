@@ -1099,18 +1099,33 @@
       var trilha = ordem.map(function (id) { return id.charAt(0); }).join('');
 
       var dados = {
-        seg: Math.round(engajado / 1000),
-        fundo: fundo >= 0 ? SECOES[fundo] : 'nenhuma',
-        vistas: ordem.length,
+        segundos: Math.round(engajado / 1000),
+        secao_final: fundo >= 0 ? SECOES[fundo] : 'nenhuma',
+        secoes_vistas: ordem.length,
         trilha: trilha,
-        planos: Math.round(tempo['planos'] / 1000),
-        contato: Math.round(tempo['contato'] / 1000)
+        seg_planos: Math.round(tempo['planos'] / 1000),
+        seg_contato: Math.round(tempo['contato'] / 1000)
       };
 
-      // o va() só existe se o script da Vercel carregou; sem ele, silêncio
-      if (typeof window.va === 'function') {
-        window.va('event', { name: 'percurso', data: dados });
-      }
+      // Vai para a CAPI, e não para o Vercel Analytics: evento customizado
+      // lá é recurso do plano Pro, e o projeto é Hobby. O caminho próprio
+      // ainda sai ganhando — na Meta isto vira público de remarketing.
+      //
+      // keepalive é o que faz a requisição sobreviver à aba fechando; sem
+      // ele o navegador cancela tudo que estiver pendente na saída.
+      try {
+        fetch('/api/evento', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          keepalive: true,
+          body: JSON.stringify({
+            event_name: 'Percurso',
+            event_id: 'pct-' + Date.now() + '-' + Math.random().toString(36).slice(2, 10),
+            event_source_url: location.href,
+            custom_data: dados
+          })
+        }).catch(function () {});
+      } catch (e) {}
     }
 
     document.addEventListener('visibilitychange', function () {
