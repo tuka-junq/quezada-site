@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Política de Privacidade - Quezada</title>
+<meta name="description" content="Como o site da Quezada trata dados de navegação: o que é coletado, com que finalidade, por quanto tempo e como exercer seus direitos sob a LGPD.">
+<meta name="theme-color" content="#162d23">
+<link rel="canonical" href="https://www.quezada.com.br/privacidade">
+
+<!-- Esta página NÃO carrega GTM, Pixel nem Clarity. Rastrear quem vem ler a
+     política de privacidade é o tipo de detalhe que ninguém perdoa. -->
+
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="48x48" href="/assets/logo/favicon-48.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/logo/apple-touch-icon.png">
+
+<style>
+  @font-face {
+    font-family: 'Raleway';
+    src: url('/assets/fonts/raleway.woff2') format('woff2');
+    font-weight: 300 700; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Cormorant Garamond';
+    src: url('/assets/fonts/cormorant-garamond.woff2') format('woff2');
+    font-weight: 300 700; font-style: normal; font-display: swap;
+  }
+
+  :root {
+    --pine: #162d23;
+    --pine-deep: #0f211a;
+    --gold: #c9a84c;
+    --gold-grave: #8a7026;
+    --paper: #fafaf7;
+    --paper-soft: #f0efe9;
+    --ink: #0d0d0b;
+    --muted: #6b6760;
+    --line: rgba(13, 13, 11, 0.12);
+    --serif: 'Cormorant Garamond', 'Times New Roman', Georgia, serif;
+    --sans: 'Raleway', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    --shell: 760px;
+    --gutter: clamp(1.25rem, 5vw, 2.5rem);
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.65;
+  }
+
+  /* ── cabeçalho ─────────────────────────────────────────────────────── */
+  .topo {
+    background: var(--pine);
+    color: var(--paper);
+    padding: clamp(2rem, 6vw, 3.5rem) var(--gutter) clamp(2.5rem, 7vw, 4rem);
+  }
+  .topo__shell { max-width: var(--shell); margin: 0 auto; }
+  .topo a.voltar {
+    display: inline-block;
+    color: var(--gold);
+    text-decoration: none;
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid transparent;
+  }
+  .topo a.voltar:hover, .topo a.voltar:focus-visible { border-bottom-color: var(--gold); }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(2.25rem, 7vw, 3.0625rem);
+    line-height: 1.1;
+    margin: 0 0 1rem;
+    letter-spacing: -0.005em;
+  }
+  .topo p { margin: 0; color: rgba(250, 250, 247, 0.72); max-width: 54ch; }
+  .vigencia {
+    margin-top: 1.75rem !important;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    color: rgba(250, 250, 247, 0.55) !important;
+  }
+
+  /* ── corpo ─────────────────────────────────────────────────────────── */
+  main {
+    max-width: var(--shell);
+    margin: 0 auto;
+    padding: clamp(2.5rem, 7vw, 4rem) var(--gutter) clamp(4rem, 10vw, 6rem);
+  }
+  section + section { margin-top: clamp(2.25rem, 5vw, 3rem); }
+  h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(1.5rem, 4vw, 1.9375rem);
+    line-height: 1.2;
+    margin: 0 0 0.85rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: baseline;
+  }
+  h2 .num {
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gold-grave);
+    letter-spacing: 0.1em;
+    flex: none;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin: 1.5rem 0 0.4rem;
+    letter-spacing: 0.01em;
+  }
+  p { margin: 0 0 0.9rem; max-width: 66ch; }
+  p:last-child { margin-bottom: 0; }
+  ul { margin: 0 0 0.9rem; padding-left: 1.1rem; max-width: 66ch; }
+  li { margin-bottom: 0.4rem; }
+  li::marker { color: var(--gold-grave); }
+  strong { font-weight: 600; }
+  a { color: var(--pine); text-decoration: underline; text-underline-offset: 0.16em; }
+  a:hover, a:focus-visible { color: var(--gold-grave); }
+
+  /* ── destaque ──────────────────────────────────────────────────────── */
+  .nota {
+    background: var(--paper-soft);
+    border-left: 3px solid var(--gold);
+    padding: 1.15rem 1.35rem;
+    margin: 1.25rem 0;
+  }
+  .nota p { font-size: 0.9375rem; }
+
+  /* ── tabela ────────────────────────────────────────────────────────── */
+  .rolagem { overflow-x: auto; margin: 1.25rem 0; border: 1px solid var(--line); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.875rem; background: #fff; }
+  th {
+    text-align: left;
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+
+  /* ── dados do controlador ──────────────────────────────────────────── */
+  .ficha { margin: 1.25rem 0 0; display: grid; gap: 0.5rem; }
+  .ficha div { display: flex; gap: 0.75rem; flex-wrap: wrap; font-size: 0.9375rem; }
+  .ficha dt {
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    min-width: 8.5rem;
+    padding-top: 0.25rem;
+    font-weight: 600;
+  }
+  .ficha dd { margin: 0; flex: 1 1 16rem; }
+
+  footer {
+    background: var(--pine-deep);
+    color: rgba(250, 250, 247, 0.6);
+    padding: 2.25rem var(--gutter);
+    font-size: 0.8125rem;
+  }
+  footer div { max-width: var(--shell); margin: 0 auto; display: flex;
+               flex-wrap: wrap; gap: 0.75rem 1.5rem; justify-content: space-between; }
+  footer a { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<header class="topo">
+  <div class="topo__shell">
+    <a class="voltar" href="/">&larr; Voltar ao site</a>
+    <h1>Política de Privacidade</h1>
+    <p>Como este site trata dados de navegação: o que é coletado, para quê,
+       por quanto tempo e como você exerce seus direitos.</p>
+    <p class="vigencia">Vigente desde 14 de setembro de 2026 &middot; versão 1</p>
+  </div>
+</header>
+
+<main>
+
+  <section>
+    <h2><span class="num">01</span> Quem trata seus dados</h2>
+    <p>O controlador dos dados pessoais coletados neste site é:</p>
+    <dl class="ficha">
+      <div><dt>Razão social</dt><dd>MIDDLETON QUEZADA GESTÃO EMPRESARIAL LTDA - ME</dd></div>
+      <div><dt>CNPJ</dt><dd>33.034.662/0001-31</dd></div>
+      <div><dt>Endereço</dt><dd>Av. Ipanema, 165 &mdash; Empresarial 18 do Forte, Sala 1114, Barueri/SP</dd></div>
+      <div><dt>Contato</dt><dd><a href="mailto:quezadaconsultoria@gmail.com">quezadaconsultoria@gmail.com</a></dd></div>
+    </dl>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span> O que este site não faz</h2>
+    <p>Começamos pelo que não acontece aqui, porque é a parte mais curta:</p>
+    <ul>
+      <li>Este site <strong>não tem formulário</strong>. Não pedimos nem armazenamos nome,
+          e-mail, telefone ou qualquer dado que você digite.</li>
+      <li>Não há área de login, cadastro ou senha.</li>
+      <li>Não vendemos, alugamos nem cedemos dados a terceiros para fins comerciais.</li>
+      <li>Não tratamos dados de crianças ou adolescentes de forma intencional. Este site é
+          dirigido a empresas e a seus responsáveis.</li>
+    </ul>
+    <p>O contato acontece fora daqui: os botões levam você ao WhatsApp ou ao e-mail,
+       e a partir daí valem as regras do item 5.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span> O que é coletado</h2>
+    <p>Enquanto você navega, coletamos dados sobre <em>como</em> a página é usada &mdash;
+       não sobre quem você é:</p>
+    <ul>
+      <li><strong>Dados técnicos:</strong> endereço IP, tipo de navegador e sistema,
+          idioma, tipo de dispositivo e resolução de tela.</li>
+      <li><strong>Dados de navegação:</strong> páginas vistas, de onde você chegou
+          (busca, rede social, link direto), tempo de permanência, quais seções da página
+          você percorreu e em que ordem, e cliques em botões e links.</li>
+      <li><strong>Gravação de sessão:</strong> um registro dos movimentos de ponteiro,
+          rolagem e cliques na tela, usado para entender onde a página confunde ou trava.
+          O conteúdo que você digitaria é mascarado automaticamente &mdash; e, como não há
+          formulário aqui, não há o que digitar.</li>
+      <li><strong>Identificadores de publicidade:</strong> quando você chega por um anúncio,
+          um identificador atribuído pela plataforma que permite ligar a visita ao anúncio.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span> Com que finalidade e com que base legal</h2>
+    <div class="rolagem">
+      <table>
+        <thead>
+          <tr><th>Finalidade</th><th>Base legal (LGPD)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Fazer o site funcionar e mantê-lo seguro</td>
+            <td>Legítimo interesse &mdash; art. 7º, IX</td>
+          </tr>
+          <tr>
+            <td>Entender como as páginas são usadas e melhorá-las</td>
+            <td>Legítimo interesse &mdash; art. 7º, IX</td>
+          </tr>
+          <tr>
+            <td>Medir o resultado de anúncios e exibir publicidade a quem já visitou o site</td>
+            <td>Consentimento &mdash; art. 7º, I</td>
+          </tr>
+          <tr>
+            <td>Cumprir obrigação legal ou regulatória, quando aplicável</td>
+            <td>Obrigação legal &mdash; art. 7º, II</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>Você pode retirar o consentimento a qualquer momento, pelos meios do item 8. Isso não
+       afeta a licitude do tratamento feito antes da retirada.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">05</span> Ferramentas que usamos</h2>
+    <p>Cada uma recebe apenas o necessário para a sua função:</p>
+    <div class="rolagem">
+      <table>
+        <thead>
+          <tr><th>Ferramenta</th><th>Para quê</th><th>Usa cookie?</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Google Tag Manager</td>
+            <td>Gerencia as demais tags. Não coleta dados por conta própria.</td>
+            <td>Não</td>
+          </tr>
+          <tr>
+            <td>Meta Pixel e Conversions&nbsp;API</td>
+            <td>Mede resultado de anúncios no Facebook e Instagram e permite exibir
+                publicidade a quem visitou o site. Parte dos eventos é enviada pelo nosso
+                servidor, com IP e navegador.</td>
+            <td>Sim (<code>_fbp</code>, <code>_fbc</code>)</td>
+          </tr>
+          <tr>
+            <td>Vercel Web Analytics</td>
+            <td>Conta visitas e mostra de onde vem o tráfego, de forma agregada.</td>
+            <td>Não</td>
+          </tr>
+          <tr>
+            <td>Microsoft Clarity</td>
+            <td>Gravação de sessão e mapas de calor, para encontrar pontos de confusão
+                na página.</td>
+            <td>Sim</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="nota">
+      <p><strong>Ao clicar em um botão de WhatsApp ou e-mail, você sai deste site.</strong>
+         A conversa que se inicia passa a ser regida pela política de privacidade do
+         WhatsApp (Meta) ou do seu provedor de e-mail. Os dados que você compartilhar
+         nessa conversa são tratados por nós para atender à sua solicitação, com base no
+         art. 7º, V da LGPD (procedimentos preliminares a um contrato).</p>
+    </div>
+    <p>Meta Platforms e Microsoft podem tratar dados fora do Brasil. Essa transferência
+       internacional se apoia nas cláusulas e salvaguardas dos respectivos contratos de
+       tratamento de dados e no art. 33 da LGPD.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">06</span> Cookies</h2>
+    <p>Cookies são pequenos arquivos que o site grava no seu navegador. Aqui eles se
+       dividem em dois grupos:</p>
+    <h3>Necessários</h3>
+    <p>Mantêm o site funcionando e seguro. Sem eles a página não opera corretamente.</p>
+    <h3>Publicidade e análise</h3>
+    <p>Os cookies da Meta e da Microsoft descritos no item 5. Servem para medir anúncios,
+       reconhecer visitantes recorrentes e entender o uso das páginas.</p>
+    <p>Você pode bloquear ou apagar cookies nas configurações do seu navegador, e usar as
+       opções de anúncio das próprias plataformas. Bloquear os cookies de análise e
+       publicidade não impede o uso do site.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">07</span> Por quanto tempo guardamos</h2>
+    <ul>
+      <li><strong>Gravações de sessão:</strong> aproximadamente 30 dias, prazo de retenção
+          da ferramenta.</li>
+      <li><strong>Cookies de publicidade:</strong> até 90 dias, conforme a política da
+          plataforma, ou até que você os apague.</li>
+      <li><strong>Dados agregados de audiência:</strong> mantidos de forma estatística,
+          sem identificar pessoas.</li>
+      <li><strong>Conversas iniciadas por você:</strong> pelo tempo necessário ao
+          atendimento e, depois, pelos prazos legais aplicáveis.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="num">08</span> Seus direitos</h2>
+    <p>A LGPD garante a você, a qualquer momento e sem custo (art. 18):</p>
+    <ul>
+      <li>Confirmar se tratamos dados seus e acessá-los</li>
+      <li>Corrigir dados incompletos, inexatos ou desatualizados</li>
+      <li>Pedir anonimização, bloqueio ou eliminação de dados desnecessários ou excessivos</li>
+      <li>Solicitar a portabilidade a outro fornecedor</li>
+      <li>Pedir a eliminação dos dados tratados com base no seu consentimento</li>
+      <li>Saber com quais entidades compartilhamos dados</li>
+      <li>Ser informado sobre a possibilidade de não consentir e as consequências disso</li>
+      <li>Revogar o consentimento</li>
+      <li>Opor-se a tratamento feito com base em legítimo interesse</li>
+    </ul>
+    <p>Para exercer qualquer um deles, escreva para
+       <a href="mailto:quezadaconsultoria@gmail.com">quezadaconsultoria@gmail.com</a>.
+       Respondemos no menor prazo possível e, no máximo, dentro dos prazos legais. Podemos
+       pedir informações que confirmem sua identidade, para não entregar dados à pessoa
+       errada.</p>
+    <p>Você também pode apresentar reclamação à Autoridade Nacional de Proteção de Dados
+       (ANPD).</p>
+  </section>
+
+  <section>
+    <h2><span class="num">09</span> Segurança</h2>
+    <p>Adotamos medidas técnicas e administrativas para proteger os dados contra acesso não
+       autorizado, perda ou alteração indevida. O site é servido integralmente por conexão
+       criptografada (HTTPS), e o acesso às ferramentas de análise é restrito às pessoas
+       que precisam dele.</p>
+    <p>Nenhum sistema é infalível. Em caso de incidente de segurança relevante,
+       comunicaremos os titulares afetados e a ANPD, conforme o art. 48 da LGPD.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">10</span> Mudanças nesta política</h2>
+    <p>Esta política pode ser atualizada quando mudarmos as ferramentas do site ou quando a
+       legislação exigir. A data de vigência no topo da página indica a versão atual.
+       Alterações relevantes serão sinalizadas no próprio site.</p>
+  </section>
+
+</main>
+
+<footer>
+  <div>
+    <span>© 2026 MIDDLETON QUEZADA GESTÃO EMPRESARIAL LTDA - ME &middot; CNPJ 33.034.662/0001-31</span>
+    <a href="/">quezada.com.br</a>
+  </div>
+</footer>
+
+</body>
+</html>
