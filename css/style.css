@@ -2176,12 +2176,26 @@ a.find__value:hover { color: var(--gold-light); }
      de sala, fundo verde liso. É ali que a cópia mora, sempre. Por isso os
      três blocos ancoram no rodapé da tela em vez de no centro: a composição
      do vídeo é que manda, não a do texto. */
-  /* 640vh e não 490: os 150vh a mais vão quase todos para a bagunça da mesa,
-     que passou de 0,74 para 1,4 tela de rolagem — a mesma animação de 8s
-     conduzida com quase o dobro de distância. O resto do roteiro mantém a
-     distância em pixels que já tinha; o que muda são as frações, e elas vêm
-     dos `data-beat-sm` no HTML. */
-  .scene { --cena-h: 640vh; }
+  /* 400vh, e este é o PISO — não encurte sem redistribuir os `data-beat-sm`.
+     A cena era 640vh. Medido em 16/09/2026 no aparelho de 390x844: o Clarity
+     apontou rolagem média de 5,66% (~1,2 tela) e o herói sozinho comia 6,4
+     telas das 21,6 da página. Em 400vh ele cai para 4 telas e os planos sobem
+     de 11,5 para 9,1.
+
+     O limite não é estético, é de coreografia. Cada texto acende numa faixa
+     do percurso (`data-beat-sm`), e a mais estreita que importa é a
+     0.25–0.47 — "Sua empresa cresce, dá lucro". Com swipe de tela cheia
+     (844px), medindo a classe `is-on` no DOM a cada parada:
+
+       640vh  faixa = 1.003px   nenhuma pulada
+       400vh  faixa =   557px   nenhuma pulada   <- aqui
+       320vh  faixa =   409px   sobrevive por 29px, margem nenhuma
+       250vh  faixa =   279px   PULA a faixa inteira
+
+     Sobra um buraco herdado: entre 0.09 e 0.25 nada acende, e no 640vh isso
+     dava um swipe inteiro de tela sem texto. Fechar esse buraco nos
+     `data-beat-sm` é o que permitiria descer abaixo de 400vh. */
+  .scene { --cena-h: 400vh; }
 
   .scene__copy--hero,
   .scene__copy--mid,
